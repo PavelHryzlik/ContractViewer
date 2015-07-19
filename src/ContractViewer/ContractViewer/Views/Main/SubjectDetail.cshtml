@@ -1,0 +1,25 @@
+﻿@model IEnumerable<ContractViewer.Models.Contract>
+@using GridMvc.Html
+
+@{
+    ViewBag.Title = "SubjectDetail";
+}
+
+<h2>@Html.DisplayFor(model => model.First().Publisher)</h2>
+
+<div>
+    @Html.Grid(Model).Columns(columns =>
+    {
+        columns.Add()
+            .Encoded(false)
+            .Sanitized(false)
+            .RenderValueAs(d =>
+                @<b>
+                    @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
+                </b>);
+
+    }).AutoGenerateColumns().WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+</div>
+
+
+
