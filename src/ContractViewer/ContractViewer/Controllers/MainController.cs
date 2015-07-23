@@ -54,6 +54,15 @@ namespace ContractViewer.Controllers
 
                    ?pub gr:legalName @publisher .
                 }";
+        private const string SelectDBpediaInfo =
+              @"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
+                
+                SELECT DISTINCT ?city ?img
+                WHERE {
+                   ?city rdfs:label @publisher@cs;
+                         dbpedia-owl:thumbnail ?img .       
+                }";
 
         private IEnumerable<Contract> GetContracts(string publisherName)
         {
@@ -140,7 +149,7 @@ namespace ContractViewer.Controllers
             }
 
             return contracts;
-        }
+        }  
 
         private Contract GetContract(string baseDomain, string contractId, string version, string publisher)
         {
@@ -156,6 +165,7 @@ namespace ContractViewer.Controllers
 
             //var g = new OntologyGraph();
             //UriLoader.Load(g, new Uri(ContractOntology), new TurtleParser());
+
 
             contract.Uri = contractUri.ToString();
             contract.BaseDomain = baseDomain;
@@ -219,6 +229,27 @@ namespace ContractViewer.Controllers
             return contract;
         }
 
+        private Publisher GetPublisher(string publisherName)
+        {
+            var publisher = new Publisher {Name = publisherName};
+
+            var dvPediaQueryString = new SparqlParameterizedString { CommandText = SelectDBpediaInfo };
+            dvPediaQueryString.SetLiteral("publisher", publisherName);
+
+            var dbPediaEndpoint = new SparqlRemoteEndpoint(new Uri("http://cs.dbpedia.org/sparql"));
+            SparqlResultSet dbPediaResults = dbPediaEndpoint.QueryWithResultSet(dvPediaQueryString.ToString());
+
+            foreach (SparqlResult result in dbPediaResults.Results)
+            {
+                if (!String.IsNullOrEmpty(result.Value("img").ToString()))
+                {
+                    publisher.ImageUrl = result.Value("img").ToString();
+                }
+            }
+
+            return publisher;
+        }
+
         public ActionResult Index()
         {
             return View(GetContracts(null));
@@ -231,7 +262,13 @@ namespace ContractViewer.Controllers
 
         public ActionResult SubjectDetail(string publisher)
         {
-            return View(GetContracts(publisher));
+            var publisherViewModel = new PublisherViewModel
+            {
+                Publisher = GetPublisher(publisher),
+                Contracts = GetContracts(publisher)
+            };
+
+            return View(publisherViewModel);
         }
     }
 }

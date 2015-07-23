@@ -17,7 +17,8 @@
                 @<b>
                     @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
                 </b>);
-        columns.Add()
+        columns.Add(m => m.Publisher)
+            .Titled("Vydavatel")
             .Encoded(false)
             .Sanitized(false)
             .RenderValueAs(d =>

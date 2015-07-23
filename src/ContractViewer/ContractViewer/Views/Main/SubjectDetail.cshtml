@@ -1,14 +1,16 @@
-﻿@model IEnumerable<ContractViewer.Models.Contract>
+﻿@model ContractViewer.Models.PublisherViewModel
 @using GridMvc.Html
 
 @{
     ViewBag.Title = "SubjectDetail";
 }
 
-<h2>@Html.DisplayFor(model => model.First().Publisher)</h2>
+<h2>@Html.DisplayFor(model => model.Publisher.Name)</h2>
+
+<img alt="" src="@Url.Content(Model.Publisher.ImageUrl)" />
 
 <div>
-    @Html.Grid(Model).Columns(columns =>
+    @Html.Grid(Model.Contracts).Columns(columns =>
     {
         columns.Add()
             .Encoded(false)
