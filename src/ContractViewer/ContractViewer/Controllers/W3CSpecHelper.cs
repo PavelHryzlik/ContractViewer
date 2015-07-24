@@ -23,6 +23,10 @@ namespace ContractViewer.Controllers
             {
                 switch (((ILiteralNode)node).DataType.ToString())
                 {
+                    case XmlSpecsHelper.XmlSchemaDataTypeBoolean:
+                        var intBool = Int32.Parse(((ILiteralNode)node).Value);
+                        return new BooleanNode(node.Graph, Convert.ToBoolean(intBool));
+
                     case XmlSpecsHelper.XmlSchemaDataTypeDateTime:
                         var dateTime = DateTime.Parse(((ILiteralNode)node).Value);
                         return new DateTimeNode(node.Graph, new DateTimeOffset(dateTime));

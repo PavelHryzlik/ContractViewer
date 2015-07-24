@@ -7,6 +7,8 @@
 
 <h2>Seznam smluv</h2>
 
+<hr />
+
 <div>
     @Html.Grid(Model).Columns(columns =>
     {
@@ -26,5 +28,5 @@
                     @Html.ActionLink(d.Publisher, "SubjectDetail", new { d.Publisher })
                 </b>);
 
-    }).AutoGenerateColumns().WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+    }).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
 </div>

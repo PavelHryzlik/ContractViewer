@@ -1,70 +1,174 @@
-﻿@model ContractViewer.Models.Contract
+﻿@model ContractViewer.Models.ContractViewModel
+@using GridMvc.Html
 
 @{
     ViewBag.Title = "ContractDetail";
 }
 
-<h2>Detail smlouvy @Html.DisplayFor(model => model.Uri)</h2>
+<h2>Detail smlouvy</h2>
 
 <div>
-    <h4>Contract</h4>
+    <h4>Smlouva @Html.ActionLink(Model.Contract.Uri, Model.Contract.Uri)</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Uri)
-        </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Uri)
-        </dd>
-        
-        <dt>
-            @Html.DisplayNameFor(model => model.ContractId)
-        </dt>
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Document)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.ContractId)
-        </dd>
+            <dd>
+                @Html.ActionLink(Model.Contract.Document, Model.Contract.Document)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Version)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.ContractId)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Version)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Contract.ContractId)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Version)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Version)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Publisher)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Publisher)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Title)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Created)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Title)
+            </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.ContractType)
+            </dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
+            <dd>
+                @Html.DisplayFor(model => model.Contract.ContractType)
+            </dd>
 
-    </dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Description)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Description)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Anonymised)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Anonymised)
+            </dd>
+        </dl>
+    </div>
+
+    <div class="col-md-6">
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Competency)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Competency)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.AwardID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.AwardID)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.DateSigned)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.DateSigned)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.ValidFrom)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.ValidFrom)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.ValidUntil)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.ValidUntil)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Currency)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Currency)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.AmountNoVat)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.AmountNoVat)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Contract.Amount)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Contract.Amount)
+            </dd>
+        </dl>
+    </div>
+
+    <div style="@(Model.Parties.Any() ? "display:block" : "display:none")">
+        <hr />
+        <h4>Smluvní strany</h4>
+        @Html.Grid(Model.Parties).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    </div>
+
+    <div style="@(Model.Attachments.Any() ? "display:block" : "display:none")">
+        <hr />
+        <h4>Přílohy</h4>
+        @Html.Grid(Model.Attachments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    </div>
+
+    <div style="@(Model.Amendments.Any() ? "display:block" : "display:none")">
+        <hr />
+        <h4>Dodatky</h4>
+        @Html.Grid(Model.Amendments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    </div>
+
+    <div style="@(Model.Milestones.Any() ? "display:block" : "display:none")">
+        <hr />
+        <h4>Milníky</h4>
+        @Html.Grid(Model.Milestones).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    </div>
+
 </div>

@@ -5,10 +5,13 @@
     ViewBag.Title = "SubjectDetail";
 }
 
-<h2>@Html.DisplayFor(model => model.Publisher.Name)</h2>
+<h2>Město @Html.DisplayFor(model => model.Publisher.Name)</h2>
+<hr />
 
 <img alt="" src="@Url.Content(Model.Publisher.ImageUrl)" />
 
+<hr />
+<h4>Seznam smluv</h4>
 <div>
     @Html.Grid(Model.Contracts).Columns(columns =>
     {

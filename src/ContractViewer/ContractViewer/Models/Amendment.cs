@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.ComponentModel.DataAnnotations;
+using GridMvc.DataAnnotations;
+
+namespace ContractViewer.Models
+{
+    public class Amendment
+    {
+        [NotMappedColumn]
+        [Display(Name = "Adresa zdroje")]
+        public string Uri { get; set; }
+
+        [NotMappedColumn]
+        [Display(Name = "Doména")]
+        public string BaseDomain { get; set; }
+
+        [Display(Name = "Dokument")]
+        [GridColumn(Title = "Dokument")]
+        public string Document { get; set; }
+
+        [Display(Name = "Id")]
+        [GridColumn(Title = "Lokální Id")]
+        public string AmendmentId { get; set; }
+
+        [Display(Name = "Číslo dodatku")]
+        [GridColumn(Title = "Číslo dodatku")]
+        public string Number { get; set; }
+
+        [Display(Name = "Předmět")]
+        [GridColumn(Title = "Předmět")]
+        public string Title { get; set; }
+
+        [Display(Name = "Datum podpisu")]
+        [GridColumn(Title = "Datum podpisu", Format = "{0:dd/MM/yyyy}")]
+        public DateTime DateSigned { get; set; } 
+    }
+}
