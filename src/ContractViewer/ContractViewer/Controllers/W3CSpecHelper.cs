@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Web;
 using VDS.RDF;
 using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
@@ -11,7 +10,7 @@ namespace ContractViewer.Controllers
     public static class W3CSpecHelper
     {
         /// <summary>
-        /// Support only DateTime, Date and Time
+        /// Support only Boolean, DateTime, Date and Time
         /// </summary>
         /// <param name="node">Input node</param>
         /// <returns>result node</returns>
@@ -34,8 +33,7 @@ namespace ContractViewer.Controllers
                         var date = DateTime.Parse(((ILiteralNode)node).Value);
                         return new DateNode(node.Graph, date);
                     case XmlSpecsHelper.XmlSchemaDataTypeTime:
-                        var timeSpan = TimeSpan.Parse(((ILiteralNode)node).Value);
-                        return new TimeSpanNode(node.Graph, timeSpan);
+                        return new TimeSpanNode(node.Graph, TimeSpan.Parse(((ILiteralNode)node).Value.Split('+').First()));
                     default:
                         return node;
                 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using VDS.RDF.Query;
 using System.Reflection;
 using VDS.RDF;
@@ -118,7 +116,7 @@ namespace ContractViewer.Controllers
         {
             var endpoint = new SparqlRemoteEndpoint(new Uri("http://student.opendata.cz/sparql"));
 
-            SparqlResultSet results = null;
+            SparqlResultSet results;
             if (String.IsNullOrEmpty(publisherName))
             {
                 results = endpoint.QueryWithResultSet(query);

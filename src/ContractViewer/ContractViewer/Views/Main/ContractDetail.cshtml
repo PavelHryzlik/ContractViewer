@@ -7,7 +7,7 @@
 
 <h2>Detail smlouvy</h2>
 
-<div>
+<div class="row">
     <h4>Smlouva @Html.ActionLink(Model.Contract.Uri, Model.Contract.Uri)</h4>
     <hr />
 
@@ -90,11 +90,11 @@
             </dd>
 
             <dt>
-                @Html.DisplayNameFor(model => model.Contract.AwardID)
+                @Html.DisplayNameFor(model => model.Contract.AwardId)
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Contract.AwardID)
+                @Html.DisplayFor(model => model.Contract.AwardId)
             </dd>
 
             <dt>
@@ -146,29 +146,29 @@
             </dd>
         </dl>
     </div>
-
-    <div style="@(Model.Parties.Any() ? "display:block" : "display:none")">
-        <hr />
-        <h4>Smluvní strany</h4>
-        @Html.Grid(Model.Parties).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
-    </div>
-
-    <div style="@(Model.Attachments.Any() ? "display:block" : "display:none")">
-        <hr />
-        <h4>Přílohy</h4>
-        @Html.Grid(Model.Attachments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
-    </div>
-
-    <div style="@(Model.Amendments.Any() ? "display:block" : "display:none")">
-        <hr />
-        <h4>Dodatky</h4>
-        @Html.Grid(Model.Amendments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
-    </div>
-
-    <div style="@(Model.Milestones.Any() ? "display:block" : "display:none")">
-        <hr />
-        <h4>Milníky</h4>
-        @Html.Grid(Model.Milestones).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
-    </div>
-
 </div>
+
+<div class="row" style="@(Model.Parties.Any() ? "display:block" : "display:none")">
+    <hr />
+    <h4>Smluvní strany</h4>
+    @Html.Grid(Model.Parties).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+</div>
+
+<div class="row" style="@(Model.Attachments.Any() ? "display:block" : "display:none")">
+    <hr />
+    <h4>Přílohy</h4>
+    @Html.Grid(Model.Attachments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+</div>
+
+<div class="row" style="@(Model.Amendments.Any() ? "display:block" : "display:none")">
+    <hr />
+    <h4>Dodatky</h4>
+    @Html.Grid(Model.Amendments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+</div>
+
+<div class="row" style="@(Model.Milestones.Any() ? "display:block" : "display:none")">
+    <hr />
+    <h4>Milníky</h4>
+    @Html.Grid(Model.Milestones).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+</div>
+

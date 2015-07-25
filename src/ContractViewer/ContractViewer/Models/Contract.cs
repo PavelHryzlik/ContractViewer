@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
@@ -40,7 +38,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Evidenční číslo veřejné zakázky")]
         [NotMappedColumn]
-        public string AwardID { get; set; }
+        public string AwardId { get; set; }
 
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]

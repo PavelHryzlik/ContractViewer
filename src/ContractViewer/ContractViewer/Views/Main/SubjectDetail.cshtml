@@ -1,5 +1,7 @@
 ﻿@model ContractViewer.Models.PublisherViewModel
+@using ContractViewer.Utils
 @using GridMvc.Html
+@using WebGrease.Css.Extensions
 
 @{
     ViewBag.Title = "SubjectDetail";
@@ -8,12 +10,43 @@
 <h2>Město @Html.DisplayFor(model => model.Publisher.Name)</h2>
 <hr />
 
-<img alt="" src="@Url.Content(Model.Publisher.ImageUrl)" />
+<div class="row">
+    <div class="col-md-5">
 
-<hr />
-<h4>Seznam smluv</h4>
-<div>
-    @Html.Grid(Model.Contracts).Columns(columns =>
+        <img class="img-thumbnail" alt="" src="@Url.Content(Model.Publisher.ImageUrl)" />
+
+    </div>
+    <div class="col-md-7">
+        @foreach (var localPlace in Model.Publisher.LocalPlaces)
+        {
+            <h4> Budova - @localPlace.StreetAddress </h4>
+
+            <h5> Otevírací doba </h5>
+            
+            <dl class="dl-horizontal">
+                @foreach (var openingHourOfTheDay in localPlace.OpeningHoursOfTheDay)
+                {
+                    <dt>
+                        @openingHourOfTheDay.DayOfWeek.ToName()
+                    </dt>
+
+                    <dd>
+                        @foreach (var openingHour in openingHourOfTheDay.OpeningHours)
+                        {
+                            <text>@openingHour.Open.ToString(@"hh\:mm") - @openingHour.Close.ToString(@"hh\:mm") </text>
+                        }
+                    </dd> 
+                }
+            </dl>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <hr />
+    <h4>Seznam smluv</h4>
+    <div>
+        @Html.Grid(Model.Contracts).Columns(columns =>
     {
         columns.Add()
             .Encoded(false)
@@ -24,7 +57,7 @@
                 </b>);
 
     }).AutoGenerateColumns().WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+    </div>
+
 </div>
-
-
 

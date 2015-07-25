@@ -1,46 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using ContractViewer.Models;
 using VDS.RDF;
 using VDS.RDF.Nodes;
-using VDS.RDF.Ontology;
-using VDS.RDF.Parsing;
 using VDS.RDF.Query;
-using WebGrease;
-using WebGrease.Css.Extensions;
 
 namespace ContractViewer.Controllers
 {
     public class MainController : Controller
     {
-        private const string ContractOntology = "https://raw.githubusercontent.com/PavelHryzlik/ContractStandard/master/standard/lod/contract_ontology.ttl";
-
         private Contract GetContract(string baseDomain, string contractId, string version, string publisher)
         {
-            var queryString = new SparqlParameterizedString();
-            queryString.CommandText = SparqlQueryConstants.SelectBySubject;
+            var queryString = new SparqlParameterizedString { CommandText = SparqlQueryConstants.StudentOpenDataCz.GetContract };
             var contractUri = new Uri(String.Format("http://{0}/contract/{1}/{2}", baseDomain, contractId, version));
-            queryString.SetUri("subject", contractUri);
+            queryString.SetUri("contract", contractUri);
 
             var endpoint = new SparqlRemoteEndpoint(new Uri("http://student.opendata.cz/sparql"));
             SparqlResultSet results = endpoint.QueryWithResultSet(queryString.ToString());
 
-            var contract = new Contract();
-
-            //var g = new OntologyGraph();
-            //UriLoader.Load(g, new Uri(ContractOntology), new TurtleParser());
-
-
-            contract.Uri = contractUri.ToString();
-            contract.BaseDomain = baseDomain;
-            contract.ContractId = contractId;
-            contract.Version = version;
-            contract.Publisher = publisher;
+            var contract = new Contract
+            {
+                Uri = contractUri.ToString(),
+                BaseDomain = baseDomain,
+                ContractId = contractId,
+                Version = version,
+                Publisher = publisher
+            };
 
             foreach (SparqlResult result in results.Results)
             {
@@ -67,7 +55,7 @@ namespace ContractViewer.Controllers
 
                                 if (predicate == "awardID")
                                 {
-                                    contract.AwardID = ((ILiteralNode)node).Value;
+                                    contract.AwardId = ((ILiteralNode)node).Value;
                                 }
                                 if (predicate == "title")
                                 {
@@ -129,12 +117,9 @@ namespace ContractViewer.Controllers
 
                                 if (predicate == "contentUrl")
                                 {
-                                    contract.Document = ((IUriNode)uri).Uri.ToString();
+                                    contract.Document = uri.Uri.ToString();
                                 }
 
-                                break;
-
-                            default:
                                 break;
                         }
                     }
@@ -148,11 +133,94 @@ namespace ContractViewer.Controllers
         {
             var publisher = new Publisher { Name = publisherName };
 
-            var dvPediaQueryString = new SparqlParameterizedString { CommandText = SparqlQueryConstants.SelectDBpediaInfo };
-            dvPediaQueryString.SetLiteral("publisher", publisherName);
+            var slodQueryString = new SparqlParameterizedString { CommandText = SparqlQueryConstants.StudentOpenDataCz.GetPublisherByName };
+            slodQueryString.SetLiteral("publisher", publisherName);
 
-            var dbPediaEndpoint = new SparqlRemoteEndpoint(new Uri("http://cs.dbpedia.org/sparql"));
-            SparqlResultSet dbPediaResults = dbPediaEndpoint.QueryWithResultSet(dvPediaQueryString.ToString());
+            var slodEndpoint = new SparqlRemoteEndpoint(new Uri("http://student.opendata.cz/sparql"));
+            SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
+
+            foreach (SparqlResult result in slotResults.Results)
+            {
+                if (!String.IsNullOrEmpty(result.Value("ic").ToString()))
+                {
+                    publisher.Ic = result.Value("ic").ToString();
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("aresLink").ToString()))
+                {
+                    publisher.AresUrl = result.Value("aresLink").ToString();
+                }
+            }
+
+
+
+            var lodEndpoint = new SparqlRemoteEndpoint(new Uri("http://linked.opendata.cz/sparql"));
+
+
+            var lodGetOpeningHoursQueryString = new SparqlParameterizedString { CommandText = SparqlQueryConstants.LinkedOpenDataCz.GetBusinessEntityOpeningHours };
+            lodGetOpeningHoursQueryString.SetUri("businessEntity", new Uri(publisher.AresUrl));
+            
+
+
+
+            SparqlResultSet lodGetOpeningHoursResults = lodEndpoint.QueryWithResultSet(lodGetOpeningHoursQueryString.ToString());
+
+            var localPlaces = new List<LocalPlace>();
+
+            foreach (SparqlResult result in lodGetOpeningHoursResults.Results)
+            {
+
+                if (!String.IsNullOrEmpty(result.Value("localPlace").ToString()))
+                {
+                    var localPlaceStr = result.Value("localPlace").ToString();
+
+                    LocalPlace localPlace;
+                    if (localPlaces.Any(l => l.Url == localPlaceStr))
+                    {
+                        localPlace = localPlaces.First(l => l.Url == localPlaceStr);
+                    }
+                    else
+                    {
+                        localPlace = new LocalPlace 
+                        {
+                            Url = localPlaceStr, 
+                            OpeningHoursOfTheDay = new List<OpeningHoursOfTheDay>()
+                        };
+
+                        if (!String.IsNullOrEmpty(result.Value("streetAddress").ToString()))
+                        {
+                            localPlace.StreetAddress = result.Value("streetAddress").ToString();
+                        }
+
+                        if (!String.IsNullOrEmpty(result.Value("postalCode").ToString()))
+                        {
+                            localPlace.PostalCode = result.Value("postalCode").ToString();
+                        } 
+                    }
+
+                    SetOpeningHours(result, localPlace.OpeningHoursOfTheDay);
+
+                    if (localPlaces.All(l => l.Url != localPlaceStr))
+                    {
+                        localPlaces.Add(localPlace);
+                    }
+                } 
+            }
+
+            publisher.LocalPlaces = localPlaces;
+
+            
+
+
+
+
+
+
+            var dbpdQueryString = new SparqlParameterizedString { CommandText = SparqlQueryConstants.CsDbpediaOrg.GetPublisherInfo };
+            dbpdQueryString.SetLiteral("publisher", publisherName);
+
+            var dbpdEndpoint = new SparqlRemoteEndpoint(new Uri("http://cs.dbpedia.org/sparql"));
+            SparqlResultSet dbPediaResults = dbpdEndpoint.QueryWithResultSet(dbpdQueryString.ToString());
 
             foreach (SparqlResult result in dbPediaResults.Results)
             {
@@ -166,6 +234,40 @@ namespace ContractViewer.Controllers
         }
 
 
+        public void SetOpeningHours(SparqlResult result, ICollection<OpeningHoursOfTheDay> openingHours)
+        {            
+            if (!String.IsNullOrEmpty(result.Value("dayOfWeek").ToString()))
+            {
+                var dayOfWeekStr = result.Value("dayOfWeek").ToString().Replace("http://purl.org/goodrelations/v1#", String.Empty);
+
+                var openingHour = new OpeningHour();
+                if (!String.IsNullOrEmpty(result.Value("open").ToString()) && !String.IsNullOrEmpty(result.Value("close").ToString()))
+                {
+                    openingHour = new OpeningHour
+                    {
+                        Open = ((TimeSpanNode)W3CSpecHelper.FormatNode(result.Value("open"))).AsTimeSpan(),
+                        Close = ((TimeSpanNode)W3CSpecHelper.FormatNode(result.Value("close"))).AsTimeSpan()
+                    };
+                }
+  
+                var dayOfWeek = (DayOfWeekCz) Enum.Parse(typeof (DayOfWeekCz), dayOfWeekStr);
+
+                if (openingHours.Any(d => d.DayOfWeek == dayOfWeek))
+                {
+                    openingHours.First(d => d.DayOfWeek == dayOfWeek).OpeningHours.Add(openingHour);
+                }
+                else
+                {
+                    openingHours.Add( new OpeningHoursOfTheDay
+                    {
+                        DayOfWeek = dayOfWeek,
+                        OpeningHours = new List<OpeningHour> { openingHour }
+                    });
+                } 
+            }
+        }
+
+
 
 
 
@@ -173,7 +275,7 @@ namespace ContractViewer.Controllers
         {
             var handler = new SparqlResultHandler();
 
-            return View(handler.GetContracts<Contract>(SparqlQueryConstants.SelectContracts, null));
+            return View(handler.GetContracts<Contract>(SparqlQueryConstants.StudentOpenDataCz.GetContracts, null));
         }
 
         public ActionResult SubjectDetail(string publisher)
@@ -183,7 +285,7 @@ namespace ContractViewer.Controllers
             var publisherViewModel = new PublisherViewModel
             {
                 Publisher = GetPublisher(publisher),
-                Contracts = handler.GetContracts<Contract>(SparqlQueryConstants.SelectContractsByPublisher, publisher)
+                Contracts = handler.GetContracts<Contract>(SparqlQueryConstants.StudentOpenDataCz.GetContractsByPublisherName, publisher)
             };
 
             return View(publisherViewModel);
@@ -198,10 +300,10 @@ namespace ContractViewer.Controllers
             var contractViewModel = new ContractViewModel
             {
                 Contract = contract,
-                Parties = handler.GetContracts<Party>(SparqlQueryConstants.SelectParties, "contract", contract.Uri),
-                Attachments = handler.GetContracts<Attachment>(SparqlQueryConstants.SelectAttachments, "contract", contract.Uri),
-                Amendments = handler.GetContracts<Amendment>(SparqlQueryConstants.SelectAmendments, "contract", contract.Uri),
-                Milestones = handler.GetContracts<Milestone>(SparqlQueryConstants.SelectMilestones, "contract", contract.Uri)
+                Parties = handler.GetContracts<Party>(SparqlQueryConstants.StudentOpenDataCz.GetPartiesByContract, "contract", contract.Uri),
+                Attachments = handler.GetContracts<Attachment>(SparqlQueryConstants.StudentOpenDataCz.GetAttachmentsContract, "contract", contract.Uri),
+                Amendments = handler.GetContracts<Amendment>(SparqlQueryConstants.StudentOpenDataCz.GetAmendmentsByContract, "contract", contract.Uri),
+                Milestones = handler.GetContracts<Milestone>(SparqlQueryConstants.StudentOpenDataCz.GetMilestonesByContract, "contract", contract.Uri)
             };
 
             return View(contractViewModel);
