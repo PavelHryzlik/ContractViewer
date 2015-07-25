@@ -29,6 +29,8 @@ namespace ContractViewer.Models
         [NotMappedColumn]
         public string AresUrl { get; set; }
 
+        [NotMappedColumn]
+        public GeoPoint GeoPoint { get; set; }
     }
 
     public class LocalPlace
@@ -52,6 +54,13 @@ namespace ContractViewer.Models
         public TimeSpan Open { get; set; }
 
         public TimeSpan Close { get; set; }
+    }
+
+    public class GeoPoint
+    {
+        public decimal Longitude { get; set; }
+
+        public decimal Latitude { get; set; }
     }
 
     public enum DayOfWeekCz

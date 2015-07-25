@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ContractViewer.Models;
 using VDS.RDF.Query;
@@ -267,6 +268,8 @@ namespace ContractViewer.Controllers
 
             GetPublisherOpeningHours(ref publisher);
 
+            GetPublisherCoordinates(ref publisher);
+
             GetPublisherImage(ref publisher, publisherName);
 
             return publisher;
@@ -283,6 +286,11 @@ namespace ContractViewer.Controllers
 
             foreach (SparqlResult result in slotResults.Results)
             {
+                if (!String.IsNullOrEmpty(result.Value("publisher").ToString()))
+                {
+                    publisher.Url = result.Value("publisher").ToString();
+                }
+
                 if (!String.IsNullOrEmpty(result.Value("ic").ToString()))
                 {
                     publisher.Ic = result.Value("ic").ToString();
@@ -375,6 +383,42 @@ namespace ContractViewer.Controllers
                 else
                 {
                     openingHours[dayOfWeek] = new List<OpeningHour> {openingHour};
+                }
+            }
+        }
+
+        private void GetPublisherCoordinates(ref Publisher publisher)
+        {
+            var lodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.LinkedOpenDataCz.SparqlEndpointUri));
+
+            var lodRuianLinkQueryString = new SparqlParameterizedString { CommandText = Constants.LinkedOpenDataCz.GetBusinessEntityRuianLink };
+            lodRuianLinkQueryString.SetUri("businessEntity", new Uri(publisher.AresUrl));
+
+            SparqlResultSet lodGetRuianLinkResults = lodEndpoint.QueryWithResultSet(lodRuianLinkQueryString.ToString());
+
+            var sparqlResult = lodGetRuianLinkResults.FirstOrDefault(result => !String.IsNullOrEmpty(result.Value("ruianLink").ToString()));
+            if (sparqlResult != null)
+            {
+                var rlodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.RuianLinkedOpenDataCz.SparqlEndpointUri));
+
+                var rlodCoordinatesQueryString = new SparqlParameterizedString { CommandText = Constants.RuianLinkedOpenDataCz.GetBusinessEntityCoordinates };
+                rlodCoordinatesQueryString.SetUri("addressPoint", new Uri(sparqlResult.Value("ruianLink").ToString()));
+
+                SparqlResultSet rlodCoordinatesResults = rlodEndpoint.QueryWithResultSet(rlodCoordinatesQueryString.ToString());
+
+                foreach (SparqlResult result in rlodCoordinatesResults.Results)
+                {
+                    var geoPoint = new GeoPoint();
+                    if (!String.IsNullOrEmpty(result.Value("latitude").ToString()))
+                    {
+                        geoPoint.Latitude = Convert.ToDecimal(result.Value("latitude").ToString(), CultureInfo.InvariantCulture);
+                    }
+
+                    if (!String.IsNullOrEmpty(result.Value("longitude").ToString()))
+                    {
+                        geoPoint.Longitude = Convert.ToDecimal(result.Value("longitude").ToString(), CultureInfo.InvariantCulture);
+                    }
+                    publisher.GeoPoint = geoPoint;
                 }
             }
         }
