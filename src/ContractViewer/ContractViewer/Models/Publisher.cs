@@ -44,14 +44,7 @@ namespace ContractViewer.Models
         public string PostalCode { get; set; }
 
         [NotMappedColumn]
-        public ICollection<OpeningHoursOfTheDay> OpeningHoursOfTheDay { get; set; }
-    }
-
-    public class OpeningHoursOfTheDay
-    {
-        public DayOfWeekCz DayOfWeek { get; set; }
-
-        public ICollection<OpeningHour> OpeningHours { get; set; }
+        public SortedDictionary<DayOfWeekCz, ICollection<OpeningHour>> OpeningHours { get; set; }
     }
 
     public class OpeningHour
@@ -64,19 +57,19 @@ namespace ContractViewer.Models
     public enum DayOfWeekCz
     {     
         [Display(Name = "Pondělí")]
-        Monday,
+        Monday = 0,
         [Display(Name = "Úterý")]
-        Tuesday,
+        Tuesday = 1,
         [Display(Name = "Středa")]
-        Wednesday,
+        Wednesday = 2,
         [Display(Name = "Čtvrtek")]
-        Thursday,
+        Thursday = 3,
         [Display(Name = "Pátek")]
-        Friday,
+        Friday = 4,
         [Display( Name = "Sobota")]
-        Saturday,
+        Saturday = 5,
         [Display(Name = "Neděle")]
-        Sunday
+        Sunday = 6
     }
 
 }

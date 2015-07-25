@@ -1,9 +1,13 @@
-﻿namespace ContractViewer.Controllers
+﻿using System;
+
+namespace ContractViewer.Controllers
 {
-    public static class SparqlQueryConstants
+    public static class Constants
     {
         public static class StudentOpenDataCz
         {
+            public const string SparqlEndpointUri = "http://student.opendata.cz/sparql";
+
             public const string GetContract = "SELECT * WHERE { @contract ?p ?o }";
 
             public const string GetContracts =
@@ -140,6 +144,8 @@
 
         public static class CsDbpediaOrg
         {
+            public const string SparqlEndpointUri = "http://cs.dbpedia.org/sparql";
+
             public const string GetPublisherInfo =
                 @"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
@@ -153,6 +159,8 @@
 
         public static class LinkedOpenDataCz
         {
+            public const string SparqlEndpointUri = "http://linked.opendata.cz/sparql";
+
             public const string GetBusinessEntityOpeningHours =
                 @"PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>
@@ -220,6 +228,8 @@
 
         public static class RuianLinkedOpenDataCz
         {
+            public const string SparqlEndpointUri = "http://ruian.linked.opendata.cz/sparql";
+
             public const string GetBusinessEntityCoordinates =
                 @"PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>

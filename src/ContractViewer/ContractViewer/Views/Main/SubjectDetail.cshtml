@@ -19,19 +19,19 @@
     <div class="col-md-7">
         @foreach (var localPlace in Model.Publisher.LocalPlaces)
         {
-            <h4> Budova - @localPlace.StreetAddress </h4>
+            <h4> Budova - @localPlace.StreetAddress PSČ @localPlace.PostalCode </h4>
 
             <h5> Otevírací doba </h5>
             
             <dl class="dl-horizontal">
-                @foreach (var openingHourOfTheDay in localPlace.OpeningHoursOfTheDay)
+                @foreach (var openingHourOfTheDay in localPlace.OpeningHours)
                 {
                     <dt>
-                        @openingHourOfTheDay.DayOfWeek.ToName()
+                        @openingHourOfTheDay.Key.ToName()
                     </dt>
 
                     <dd>
-                        @foreach (var openingHour in openingHourOfTheDay.OpeningHours)
+                        @foreach (var openingHour in openingHourOfTheDay.Value)
                         {
                             <text>@openingHour.Open.ToString(@"hh\:mm") - @openingHour.Close.ToString(@"hh\:mm") </text>
                         }

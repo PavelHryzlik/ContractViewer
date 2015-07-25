@@ -172,8 +172,8 @@
     <Compile Include="Controllers\MainController.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controllers\SparqlQueryConstants.cs" />
-    <Compile Include="Controllers\SparqlResultHandler.cs" />
+    <Compile Include="Controllers\Constants.cs" />
+    <Compile Include="Controllers\SparqlQueryHandler.cs" />
     <Compile Include="Controllers\W3CSpecHelper.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
