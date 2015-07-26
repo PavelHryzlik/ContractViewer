@@ -14,7 +14,7 @@ namespace ContractViewer.Models
         public string BaseDomain { get; set; }
 
         [Display(Name = "Dokument")]
-        [GridColumn(Title = "Dokument")]
+        [NotMappedColumn]
         public string Document { get; set; }
 
         [Display(Name = "Id")]

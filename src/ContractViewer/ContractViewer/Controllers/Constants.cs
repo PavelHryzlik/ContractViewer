@@ -200,28 +200,29 @@ namespace ContractViewer.Controllers
                 @"PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX pc: <http://purl.org/procurement/public-contracts#>
+                PREFIX pccz: <http://purl.org/procurement/public-contracts-czech#>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?pco ?title ?supplierUri ?ic ?price ?Vat
+                SELECT DISTINCT ?Uri ?KodProfil ?Title ?SupplierUri ?ID ?Amount ?Vat
                 WHERE 
                 {
-                  ?pco <http://purl.org/procurement/public-contracts#contractingAuthority> <http://linked.opendata.cz/resource/business-entity/CZ00290629> ;
-                     dc:title ?title ;
-                     pco:awardedTender ?tender .
-
-                  ?tender pco:supplier ?supplierUri . 
-                  ?supplierUri gr:legalName ?supplier . 
-               
-                  BIND(CONCAT(str(?supplierUri), '/identifier') as ?icStr)
-                  BIND(URI(?icStr) as ?icUri)
-
-                  ?icUri skos:notation ?ic .
-
+                  ?Uri <http://purl.org/procurement/public-contracts#contractingAuthority> @businessEntity ;
+                     dc:title ?Title .
+     
                   OPTIONAL 
                   {
-                    ?tender pco:offeredPrice ?priceSpec .
-                    ?priceSpec gr:hasCurrencyValue ?price ;
-                               gr:valueAddedTaxIncluded	?Vat .
+                    ?Uri pccz:kodprofil ?KodProfil ;
+                         pco:awardedTender ?Tender .
+                    ?Tender pco:offeredPrice ?PriceSpec ;
+                            pco:supplier ?SupplierUri . 
+                    ?SupplierUri gr:legalName ?Supplier . 
+               
+                    BIND(CONCAT(str(?SupplierUri), '/identifier') as ?IcStr)
+                    BIND(URI(?IcStr) as ?IcUri)
+
+                    ?IcUri skos:notation ?ID .
+                    ?PriceSpec gr:hasCurrencyValue ?Amount ;
+                               gr:valueAddedTaxIncluded	1 .
                   }      
                 }";
         }

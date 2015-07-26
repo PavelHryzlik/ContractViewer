@@ -17,6 +17,26 @@
 
     </div>
     <div class="col-md-7">
+        <dl class="dl-horizontal">
+            <dt>
+                IČ
+            </dt>
+
+            <dd>
+                @{
+                    if (!String.IsNullOrEmpty(Model.Publisher.ID))
+                    {
+                        @Html.ActionLink(Model.Publisher.ID, "PublicContracts", new { Model.Publisher.Name, ID = Model.Publisher.ID })
+                    }
+                    else
+                    {
+                        @MvcHtmlString.Create(string.Empty)
+                    }
+
+                }
+            </dd>
+        </dl>       
+
         @foreach (var localPlace in Model.Publisher.LocalPlaces)
         {
             <h4> Budova - @localPlace.StreetAddress PSČ @localPlace.PostalCode </h4>

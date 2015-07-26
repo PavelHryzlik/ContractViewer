@@ -9,7 +9,7 @@ namespace ContractViewer.Models
     {
         [Display(Name = "IČ")]
         [GridColumn(Title = "IČ")]
-        public string Ic { get; set; }
+        public string ID { get; set; }
 
         [Display(Name = "Název")]
         [GridColumn(Title = "Název")]

@@ -184,6 +184,8 @@
     <Compile Include="Models\ContractViewModel.cs" />
     <Compile Include="Models\Milestone.cs" />
     <Compile Include="Models\Party.cs" />
+    <Compile Include="Models\PublicContract.cs" />
+    <Compile Include="Models\PublickContractViewModel.cs" />
     <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\PublisherViewModel.cs" />
     <Compile Include="Models\Version.cs" />
@@ -234,6 +236,7 @@
     <Content Include="Views\Shared\_Grid.cshtml" />
     <Content Include="Views\Main\ContractDetail.cshtml" />
     <Content Include="Views\Main\SubjectDetail.cshtml" />
+    <Content Include="Views\Main\PublicContracts.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

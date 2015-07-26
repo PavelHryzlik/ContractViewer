@@ -18,7 +18,7 @@
             </dt>
 
             <dd>
-                @Html.ActionLink(Model.Contract.Document, Model.Contract.Document)
+                <a href=@HttpUtility.UrlPathEncode(Model.Contract.Document)>@Model.Contract.Document</a>
             </dd>
 
             <dt>
@@ -94,7 +94,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Contract.AwardId)
+                <a href=@HttpUtility.UrlPathEncode(Model.Contract.AwardUrl)>@Model.Contract.AwardId</a>
             </dd>
 
             <dt>
@@ -151,19 +151,31 @@
 <div class="row" style="@(Model.Parties.Any() ? "display:block" : "display:none")">
     <hr />
     <h4>Smluvní strany</h4>
-    @Html.Grid(Model.Parties).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    @Html.Grid(Model.Parties).Columns(columns => columns.Add(model => model.ID)
+        .Titled("IČ")
+        .Encoded(false)
+        .Sanitized(false)
+        .RenderValueAs(d => !String.IsNullOrEmpty(d.ID) ? Html.ActionLink(d.ID, "PublicContracts", new { d.Name, d.ID }) : MvcHtmlString.Create(string.Empty))).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
 </div>
 
 <div class="row" style="@(Model.Attachments.Any() ? "display:block" : "display:none")">
     <hr />
     <h4>Přílohy</h4>
-    @Html.Grid(Model.Attachments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    @Html.Grid(Model.Attachments).Columns(columns => columns.Add(model => model.Document)
+        .Titled("Dokument")
+        .Encoded(false)
+        .Sanitized(false)
+        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a> )).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
 </div>
 
 <div class="row" style="@(Model.Amendments.Any() ? "display:block" : "display:none")">
     <hr />
     <h4>Dodatky</h4>
-    @Html.Grid(Model.Amendments).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+    @Html.Grid(Model.Amendments).Columns(columns => columns.Add(model => model.Document)
+        .Titled("Dokument")
+        .Encoded(false)
+        .Sanitized(false)
+        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a> )).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
 </div>
 
 <div class="row" style="@(Model.Milestones.Any() ? "display:block" : "display:none")">

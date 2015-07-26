@@ -24,9 +24,9 @@ namespace ContractViewer.Controllers
             return GetEntities<T>(query, String.Empty, String.Empty, nodeType);
         }
 
-        public IEnumerable<T> GetEntities<T>(string query, string variable, string substituteValue, LocalNodeType nodeType)
+        public IEnumerable<T> GetEntities<T>(string query, string variable, string substituteValue, LocalNodeType nodeType, string endpointUri = Constants.StudentOpenDataCz.SparqlEndpointUri)
         {
-            var endpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
+            var endpoint = new SparqlRemoteEndpoint(new Uri(endpointUri));
 
             var queryString = new SparqlParameterizedString { CommandText = query };
 
@@ -251,6 +251,11 @@ namespace ContractViewer.Controllers
                                     contract.Document = uri.Uri.ToString();
                                 }
 
+                                if (predicate == "publicContract")
+                                {
+                                    contract.AwardUrl = uri.Uri.ToString();
+                                }
+
                                 break;
                         }
                     }
@@ -293,7 +298,7 @@ namespace ContractViewer.Controllers
 
                 if (!String.IsNullOrEmpty(result.Value("ic").ToString()))
                 {
-                    publisher.Ic = result.Value("ic").ToString();
+                    publisher.ID = result.Value("ic").ToString();
                 }
 
                 if (!String.IsNullOrEmpty(result.Value("aresLink").ToString()))

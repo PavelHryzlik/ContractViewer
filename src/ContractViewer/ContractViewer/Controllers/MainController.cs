@@ -38,5 +38,19 @@ namespace ContractViewer.Controllers
 
             return View(contractViewModel);
         }
+
+        public ActionResult PublicContracts(string Name, string ID)
+        {
+            var subjectUri = "http://linked.opendata.cz/resource/business-entity/CZ" + ID;
+
+            var publickContractViewModel = new PublickContractViewModel
+            {
+                Id = ID,  
+                Name = Name,
+                PublicContract = _handler.GetEntities<PublicContract>(Constants.LinkedOpenDataCz.GetBusinessEntityPublicContracts, "businessEntity", subjectUri, LocalNodeType.Uri, Constants.LinkedOpenDataCz.SparqlEndpointUri)
+            };
+
+            return View(publickContractViewModel);
+        }
     }
 }

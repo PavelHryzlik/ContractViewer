@@ -11,7 +11,7 @@ namespace ContractViewer.Models
         public string Uri { get; set; }
 
         [Display(Name = "IČ")]
-        [GridColumn(Title = "IČ")]
+        [NotMappedColumn]
         public string ID { get; set; }
 
         [Display(Name = "Lokální Id")]

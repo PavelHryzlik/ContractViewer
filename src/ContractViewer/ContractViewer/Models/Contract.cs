@@ -40,6 +40,9 @@ namespace ContractViewer.Models
         [NotMappedColumn]
         public string AwardId { get; set; }
 
+        [NotMappedColumn]
+        public string AwardUrl { get; set; }
+
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]
         public string Title { get; set; }
