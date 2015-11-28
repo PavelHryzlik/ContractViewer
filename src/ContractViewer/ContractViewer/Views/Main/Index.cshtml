@@ -1,32 +1,148 @@
-﻿@model IEnumerable<ContractViewer.Models.Contract>
+﻿@model ContractViewer.Models.IndexViewModel
+@using System.Drawing
+@using System.Globalization
 @using GridMvc.Html
+@using Jmelosegui.Mvc.GoogleMap
+@using ContractViewer.Models;
 
 @{
     ViewBag.Title = "Home Page";
 }
 
-<h2>Seznam smluv</h2>
+<div class="row">
+    @{
+        Html.GoogleMap()
+          .Name("map")
+          .Height(650)
+          .Center(c => c.Address("Czech republic"))
+          .Zoom(8)
+          .Culture(CultureInfo.GetCultureInfo("cs"))
+          .ScaleControlVisible(Model.GoogleMap.ShowScaleControl)
+          .PanControlVisible(Model.GoogleMap.ShowPanControl)
+          .PanControlPosition(Model.GoogleMap.PanControlPosition)
+          .OverviewMapControlVisible(Model.GoogleMap.ShowOverviewMapControl)
+          .OverviewMapControlOpened(Model.GoogleMap.OverviewMapControlOpened)
+          .StreetViewControlVisible(Model.GoogleMap.ShowStreetViewControl)
+          .StreetViewControlPosition(Model.GoogleMap.StreetViewControlPosition)
+          .ZoomControlVisible(Model.GoogleMap.ShowZoomControl)
+          .ZoomControlPosition(Model.GoogleMap.ZoomControlPosition)
+          .ZoomControlStyle(Model.GoogleMap.ZoomControlStyle)
+          .MapTypeControlVisible(Model.GoogleMap.ShowMapType)
+          .MapTypeId(Model.GoogleMap.MapTypeControl)
+          .MapTypeControlStyle(Model.GoogleMap.MapTypeControlStyle)
+          .MapTypeControlPosition(Model.GoogleMap.MapTypeControlPosition)
+          .StyledMapTypes(map =>
+              map.Add()
+                  .Styles(style =>
+                  {
+                      style.Add()
+                          .FeatureType(FeatureType.Administrative)
+                          .ElementType(ElementType.LabelsTextFill)
+                          .Color(ColorTranslator.FromHtml("#444444"));
 
-<hr />
+                      style.Add()
+                          .FeatureType(FeatureType.Landscape)
+                          .ElementType(ElementType.All)
+                          .Color(ColorTranslator.FromHtml("#f2f2f2"));
+
+                      style.Add()
+                          .FeatureType(FeatureType.Poi)
+                          .ElementType(ElementType.All)
+                          .Visibility(MapTypeStylerVisibility.Off);
+
+                      style.Add()
+                          .FeatureType(FeatureType.Road)
+                          .ElementType(ElementType.All)
+                          .Saturation(-100)
+                          .Lightness(45);
+
+                      style.Add()
+                          .FeatureType(FeatureType.RoadHighway)
+                          .ElementType(ElementType.All)
+                          .Visibility(MapTypeStylerVisibility.Simplified);
+
+                      style.Add()
+                          .FeatureType(FeatureType.RoadArterial)
+                          .ElementType(ElementType.LabelsIcon)
+                          .Visibility(MapTypeStylerVisibility.Off);
+
+                      style.Add()
+                          .FeatureType(FeatureType.Transit)
+                          .ElementType(ElementType.All)
+                          .Visibility(MapTypeStylerVisibility.Off);
+
+                      style.Add()
+                          .FeatureType(FeatureType.Water)
+                          .ElementType(ElementType.All)
+                          .Color(ColorTranslator.FromHtml("#46bcec"))
+                          .Visibility(MapTypeStylerVisibility.On);
+                  })
+                  .MapTypeName("Custom Style")
+          )
+          .MapTypeId("Custom Style")
+          .BindTo<Publisher, Circle>
+          (Model.Subjects, mappings =>
+          {
+              mappings.For<Publisher>(binding => binding.ItemDataBound(
+                  (circle, obj) =>
+                  {
+                      circle.Center = new Location((double)obj.GeoPoint.Latitude, (double)obj.GeoPoint.Longitude);
+                      circle.Radius = obj.NumberOfContracts * 2000;
+                      circle.Clickable = true;
+                  }));
+          })
+          .BindTo<Publisher, Marker>
+          (Model.Subjects, mappings =>
+          {
+              mappings.For<Publisher>(binding => binding.ItemDataBound(
+                  (marker, obj) =>
+                  {
+                      marker.Latitude = (double)obj.GeoPoint.Latitude;
+                      marker.Longitude = (double)obj.GeoPoint.Longitude;
+                      marker.Window = new InfoWindow(marker)
+                      {
+                          Template =
+                            {
+                                Content = () => ViewContext.Writer.Write(obj.Name)
+                            }
+                      };
+                  }));
+          }).Render();
+    }
+
+</div>
 
 <div class="row">
-    @Html.Grid(Model).Columns(columns =>
-    {
-        columns.Add()
-            .Encoded(false)
-            .Sanitized(false)
-            .RenderValueAs(d =>
-                @<b>
-                    @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
-                </b>);
-        columns.Add(m => m.Publisher)
-            .Titled("Vydavatel")
-            .Encoded(false)
-            .Sanitized(false)
-            .RenderValueAs(d =>
-                @<b>
-                    @Html.ActionLink(d.Publisher, "SubjectDetail", new { d.Publisher })
-                </b>);
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
 
-    }).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+        <h2>Seznam smluv</h2>
+
+        <hr/>
+
+        @Html.Grid(Model.Contracts).Columns(columns =>
+        {
+            columns.Add()
+                .Encoded(false)
+                .Sanitized(false)
+                .RenderValueAs(d =>
+                    @<b>
+                        @Html.ActionLink("Detail", "ContractDetail", new {d.BaseDomain, d.ContractId, d.Version, d.Publisher})
+                    </b>);
+            columns.Add(m => m.Publisher)
+                .Titled("Vydavatel")
+                .Encoded(false)
+                .Sanitized(false)
+                .RenderValueAs(d =>
+                    @<b>
+                        @Html.ActionLink(d.Publisher, "SubjectDetail", new {d.Publisher})
+                    </b>);
+
+        }).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+    </div>
+    <div class="col-md-1"></div>
 </div>
+
+@section scripts{
+    @(Html.GoogleMap().ScriptRegistrar())
+}

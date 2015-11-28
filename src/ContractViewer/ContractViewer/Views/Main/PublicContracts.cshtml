@@ -1,14 +1,19 @@
-﻿@model ContractViewer.Models.PublickContractViewModel
+﻿@model ContractViewer.Models.PublicContractViewModel
 @using GridMvc.Html
 
 @{
     ViewBag.Title = "Public Contracts";
 }
 
-<h2>Veřejné zakázky subjektu - @Model.Name IČ @Model.Id</h2>
-
-<hr />
-
 <div class="row">
-    @Html.Grid(Model.PublicContract).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
+    <div class="col-md-10  col-md-offset-1">
+        <h2>Veřejné zakázky subjektu - @Model.Name IČ @Model.Id</h2>
+
+        <hr />
+
+        <div class="row">
+            @Html.Grid(Model.PublicContract).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
+        </div>
+    </div>
 </div>
+

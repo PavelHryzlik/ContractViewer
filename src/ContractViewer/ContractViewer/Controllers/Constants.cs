@@ -10,6 +10,21 @@ namespace ContractViewer.Controllers
 
             public const string GetContract = "SELECT * WHERE { @contract ?p ?o }";
 
+            public const string GetNumberOfContracts =
+                @"PREFIX cn: <http://tiny.cc/open-contracting#>
+                PREFIX dc: <http://purl.org/dc/terms/>
+                PREFIX gr: <http://purl.org/goodrelations/v1#>
+
+                SELECT ?Institute (COUNT(?Contract) as ?ContractSum)
+                WHERE 
+                { 
+                   ?Contract a cn:Contract ;
+                               dc:publisher ?Publisher.
+    
+                   ?Publisher gr:legalName ?Institute .
+                }
+                GROUP BY ?Institute";
+
             public const string GetContracts =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -19,17 +34,17 @@ namespace ContractViewer.Controllers
                 SELECT ?Uri ?Publisher ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
                 WHERE 
                 { 
-                   ?Uri a <http://tiny.cc/open-contracting#Contract> ;
-                             dc:title ?Title ;
-                             cn:contractType ?ContractType ; 
-                             dc:created ?DateSigned ;
-                             ps:validFrom  ?ValidFrom ;
-                             gr:hasCurrencyValue ?Amount .
+                    ?Uri a cn:Contract ;
+                            dc:title ?Title ;
+                            cn:contractType ?ContractType ; 
+                            dc:created ?DateSigned ;
+                            ps:validFrom  ?ValidFrom ;
+                            dc:publisher ?PublisherLink ;
+                            cn:amount ?PriceSpec .
 
-                   BIND(REPLACE(str(?Uri), 'contract.*$', 'publisher') AS ?publisherStr)
-                   BIND(URI(?publisherStr) AS ?pub ) 
+                    ?PriceSpec gr:hasCurrencyValue ?Amount .
 
-                   ?pub gr:legalName ?Publisher .
+                    ?PublisherLink gr:legalName ?Publisher .
                 }";
 
             public const string GetPublisherByName =
@@ -40,13 +55,13 @@ namespace ContractViewer.Controllers
                 SELECT ?publisher ?ic ?aresLink
                 WHERE 
                 { 
-                   ?publisher dc:identifier ?ic ;
-                              gr:legalName @publisher .
+                    ?publisher dc:identifier ?ic ;
+                                gr:legalName @publisher .
 
-                   OPTIONAL
-                   {
-                     ?publisher owl:sameAs ?aresLink .
-                   }
+                    OPTIONAL
+                    {
+                        ?publisher owl:sameAs ?aresLink .
+                    }
                 }";
 
             public const string GetContractsByPublisherName =
@@ -58,17 +73,17 @@ namespace ContractViewer.Controllers
                 SELECT ?Uri ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
                 WHERE 
                 { 
-                   ?Uri a <http://tiny.cc/open-contracting#Contract> ;
-                             dc:title ?Title ;
-                             cn:contractType ?ContractType ; 
-                             dc:created ?DateSigned ;
-                             ps:validFrom  ?ValidFrom ;
-                             gr:hasCurrencyValue ?Amount .
+                    ?Uri a cn:Contract ;
+                            dc:title ?Title ;
+                            cn:contractType ?ContractType ; 
+                            dc:created ?DateSigned ;
+                            ps:validFrom  ?ValidFrom ;
+                            dc:publisher ?PublisherLink ;
+                            cn:amount ?PriceSpec .
 
-                   BIND(REPLACE(str(?Uri), 'contract.*$', 'publisher') AS ?publisherStr)
-                   BIND(URI(?publisherStr) AS ?pub ) 
+                    ?PriceSpec gr:hasCurrencyValue ?Amount .
 
-                   ?pub gr:legalName @publisher .
+                    ?PublisherLink gr:legalName @publisher .
                 }";
 
             public const string GetAmendmentsByContract =
@@ -79,11 +94,11 @@ namespace ContractViewer.Controllers
                 SELECT ?Uri ?Title ?DateSigned ?Document
                 WHERE 
                 { 
-                   ?Uri a <http://tiny.cc/open-contracting#Amendment> ;
-                             dc:title ?Title ;
-                             dc:created ?DateSigned ;
-                             com:contentUrl  ?Document ;
-                             cn:contract @contract .
+                    ?Uri a cn:Amendment ;
+                           dc:title ?Title ;
+                           dc:created ?DateSigned ;
+                           com:contentUrl  ?Document ;
+                           cn:contract @contract .
                 }";
 
             public const string GetAttachmentsContract =
@@ -94,10 +109,10 @@ namespace ContractViewer.Controllers
                 SELECT ?Uri ?Title ?Document
                 WHERE 
                 { 
-                   ?Uri a <http://tiny.cc/open-contracting#Attachment> ;
-                             dc:title ?Title ;
-                             com:contentUrl  ?Document ;
-                             cn:contract @contract .
+                   ?Uri a cn:Attachment ;
+                          dc:title ?Title ;
+                          com:contentUrl  ?Document ;
+                          cn:contract @contract .
                 }";
 
             public const string GetPartiesByContract =
@@ -110,18 +125,18 @@ namespace ContractViewer.Controllers
                 WHERE 
                 { 
                    @contract cn:party ?Uri .
-                   ?Uri a <http://purl.org/goodrelations/v1#BusinessEntity> ;
-                             gr:legalName ?Name ;
-                             schema:addressCountry ?Country ;
-                             schema:address ?Address ;
-                             gr:valueAddedTaxIncluded ?PaysVAT .
+                   ?Uri a gr:BusinessEntity ;
+                          gr:legalName ?Name ;
+                          schema:addressCountry ?Country ;
+                          schema:address ?Address ;
+                          gr:valueAddedTaxIncluded ?PaysVAT .
 
                    OPTIONAL {?Uri dc:identifier ?ID}
 
-                   ?Address a <http://schema.org/PostalAddress> ;
-                             schema:streetAddres ?StreetAddres ;
-                             schema:addressLocality ?Locality ;
-                             schema:postalCode ?PostalCode .       
+                   ?Address a schema:PostalAddress ;
+                              schema:streetAddres ?StreetAddres ;
+                              schema:addressLocality ?Locality ;
+                              schema:postalCode ?PostalCode .       
                 }";
 
             public const string GetMilestonesByContract =
@@ -133,12 +148,12 @@ namespace ContractViewer.Controllers
                 {          
                    @contract cn:implementation ?Implementation .
                    
-                   ?Implementation a <http://tiny.cc/open-contracting#Implementation> ;
+                   ?Implementation a cn:Implementation ;
                              cn:milestone ?Uri .                  
 
-                   ?Uri a <http://tiny.cc/open-contracting#Milestone> ;
-                             dc:title ?Title ;
-                             cn:dueDate ?DueDate .       
+                   ?Uri a cn:Milestone ;
+                          dc:title ?Title ;
+                          cn:dueDate ?DueDate .       
                 }";
         }
 
@@ -206,7 +221,7 @@ namespace ContractViewer.Controllers
                 SELECT DISTINCT ?Uri ?KodProfil ?Title ?SupplierUri ?ID ?Amount ?Vat
                 WHERE 
                 {
-                  ?Uri <http://purl.org/procurement/public-contracts#contractingAuthority> @businessEntity ;
+                  ?Uri pc:contractingAuthority @businessEntity ;
                      dc:title ?Title .
      
                   OPTIONAL 

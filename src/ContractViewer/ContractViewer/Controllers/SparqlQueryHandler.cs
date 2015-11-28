@@ -280,6 +280,43 @@ namespace ContractViewer.Controllers
             return publisher;
         }
 
+        public IEnumerable<Publisher> SetPublishers()
+        {
+            var subjects = new List<Publisher>();
+
+            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetNumberOfContracts };
+
+            var slodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
+            SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
+
+            foreach (SparqlResult result in slotResults.Results)
+            {
+                var publisher = new Publisher();
+                if (!String.IsNullOrEmpty(result.Value("Institute").ToString()))
+                {
+                    publisher.Name = result.Value("Institute").ToString();
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("ContractSum").ToString()))
+                {
+                    publisher.NumberOfContracts = Convert.ToInt32(((ILiteralNode)result.Value("ContractSum")).Value);
+                }
+
+                //TODO
+                if (publisher.Name == "Třebíč")
+                {
+                    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)49.22, Longitude = (decimal)15.88 };
+                }
+                if (publisher.Name == "Děčín")
+                {
+                    publisher.GeoPoint = new GeoPoint {Latitude = (decimal) 50.7736, Longitude = (decimal) 14.1961};
+                }
+
+                subjects.Add(publisher);
+            }
+
+            return subjects;
+        }
 
         private void GetPublisherByName(ref Publisher publisher, string publisherName)
         {

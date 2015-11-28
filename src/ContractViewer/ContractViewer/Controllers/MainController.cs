@@ -1,4 +1,6 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Web.Mvc;
 using ContractViewer.Models;
 
 namespace ContractViewer.Controllers
@@ -9,7 +11,14 @@ namespace ContractViewer.Controllers
 
         public ActionResult Index()
         {
-            return View(_handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContracts));
+            var indexViewModel = new IndexViewModel
+            {
+                Subjects = _handler.SetPublishers(),
+                GoogleMap = new GoogleMapViewModel(),
+                Contracts = _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContracts)
+            };
+
+            return View(indexViewModel);
         }
 
         public ActionResult SubjectDetail(string publisher)
@@ -43,7 +52,7 @@ namespace ContractViewer.Controllers
         {
             var subjectUri = "http://linked.opendata.cz/resource/business-entity/CZ" + ID;
 
-            var publickContractViewModel = new PublickContractViewModel
+            var publickContractViewModel = new PublicContractViewModel
             {
                 Id = ID,  
                 Name = Name,
@@ -51,6 +60,11 @@ namespace ContractViewer.Controllers
             };
 
             return View(publickContractViewModel);
+        }
+
+        public ActionResult About()
+        {
+            return View();
         }
     }
 }

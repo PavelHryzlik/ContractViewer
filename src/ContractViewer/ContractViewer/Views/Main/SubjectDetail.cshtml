@@ -11,12 +11,12 @@
 <hr />
 
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-4  col-md-offset-1">
 
-        <img class="img-thumbnail" alt="" src="@Url.Content(Model.Publisher.ImageUrl)" />
+        <img class="img-thumbnail" alt="" src="@Url.Content(Model.Publisher.ImageUrl)"/>
 
     </div>
-    <div class="col-md-7">
+    <div class="col-md-6">
         <dl class="dl-horizontal">
             <dt>
                 IČ
@@ -26,7 +26,7 @@
                 @{
                     if (!String.IsNullOrEmpty(Model.Publisher.ID))
                     {
-                        @Html.ActionLink(Model.Publisher.ID, "PublicContracts", new { Model.Publisher.Name, ID = Model.Publisher.ID })
+                        @Html.ActionLink(Model.Publisher.ID, "PublicContracts", new {Model.Publisher.Name, ID = Model.Publisher.ID})
                     }
                     else
                     {
@@ -35,14 +35,14 @@
 
                 }
             </dd>
-        </dl>       
+        </dl>
 
         @foreach (var localPlace in Model.Publisher.LocalPlaces)
         {
             <h4> Budova - @localPlace.StreetAddress PSČ @localPlace.PostalCode </h4>
 
             <h5> Otevírací doba </h5>
-            
+
             <dl class="dl-horizontal">
                 @foreach (var openingHourOfTheDay in localPlace.OpeningHours)
                 {
@@ -55,7 +55,7 @@
                         {
                             <text>@openingHour.Open.ToString(@"hh\:mm") - @openingHour.Close.ToString(@"hh\:mm") </text>
                         }
-                    </dd> 
+                    </dd>
                 }
             </dl>
         }
@@ -63,21 +63,22 @@
 </div>
 
 <div class="row">
-    <hr />
-    <h4>Seznam smluv</h4>
-    <div>
-        @Html.Grid(Model.Contracts).Columns(columns =>
+    <div class="col-md-10  col-md-offset-1">
+        <hr />
+        <h4>Seznam smluv</h4>
+        <div>
+            @Html.Grid(Model.Contracts).Columns(columns =>
     {
         columns.Add()
             .Encoded(false)
             .Sanitized(false)
             .RenderValueAs(d =>
-                @<b>
-                    @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
-                </b>);
+            @<b>
+                @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
+            </b>);
 
     }).AutoGenerateColumns().WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+        </div>
     </div>
-
 </div>
 

@@ -31,6 +31,9 @@ namespace ContractViewer.Models
 
         [NotMappedColumn]
         public GeoPoint GeoPoint { get; set; }
+
+        [NotMappedColumn]
+        public int NumberOfContracts { get; set; }
     }
 
     public class LocalPlace
