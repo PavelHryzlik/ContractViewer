@@ -9,6 +9,7 @@ namespace ContractViewer.Controllers
     {
         private readonly SparqlQueryHandler _handler = new SparqlQueryHandler();
 
+        [HandleError]
         public ActionResult Index()
         {
             var indexViewModel = new IndexViewModel
@@ -21,6 +22,7 @@ namespace ContractViewer.Controllers
             return View(indexViewModel);
         }
 
+        [HandleError]
         public ActionResult SubjectDetail(string publisher)
         {
             var publisherViewModel = new PublisherViewModel
@@ -32,6 +34,7 @@ namespace ContractViewer.Controllers
             return View(publisherViewModel);
         }
 
+        [HandleError]
         public ActionResult ContractDetail(string baseDomain, string contractId, string version, string publisher)
         {
             var contract = _handler.GetContract(baseDomain, contractId, version, publisher);
@@ -48,6 +51,7 @@ namespace ContractViewer.Controllers
             return View(contractViewModel);
         }
 
+        [HandleError]
         public ActionResult PublicContracts(string Name, string ID)
         {
             var subjectUri = "http://linked.opendata.cz/resource/business-entity/CZ" + ID;
@@ -62,6 +66,7 @@ namespace ContractViewer.Controllers
             return View(publickContractViewModel);
         }
 
+        [HandleError]
         public ActionResult About()
         {
             return View();
