@@ -52,8 +52,7 @@ namespace ContractViewer.Controllers
                 if (!String.IsNullOrEmpty(substituteValue))
                 {
                     PropertyInfo prop = entityType.GetProperty("Publisher");
-                    if (prop != null)
-                        prop.SetValue(contract, substituteValue, null);
+                    prop?.SetValue(contract, substituteValue, null);
                 }
 
                 foreach (var var in result.Variables)
@@ -103,28 +102,22 @@ namespace ContractViewer.Controllers
                                 if (var == "Uri")
                                 {
                                     PropertyInfo propUri = entityType.GetProperty("BaseDomain");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Authority.Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Authority.Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("ContractId");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("Version");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("AttachmentId");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("AmendmentId");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("LocalID");
-                                    if (propUri != null)
-                                        propUri.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
                                 }
 
                                 break;
@@ -146,11 +139,14 @@ namespace ContractViewer.Controllers
         public Contract GetContract(string baseDomain, string contractId, string version, string publisher)
         {
             var queryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetContract };
+            var queryStringPriceSpec = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetPriceSpecByContract };
             var contractUri = new Uri(String.Format("http://{0}/contract/{1}/{2}", baseDomain, contractId, version));
             queryString.SetUri("contract", contractUri);
+            queryStringPriceSpec.SetUri("contract", contractUri);
 
             var endpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
             SparqlResultSet results = endpoint.QueryWithResultSet(queryString.ToString());
+            SparqlResultSet resultsPriceSpec = endpoint.QueryWithResultSet(queryStringPriceSpec.ToString());
 
             var contract = new Contract
             {
@@ -160,6 +156,19 @@ namespace ContractViewer.Controllers
                 Version = version,
                 Publisher = publisher
             };
+
+            foreach (SparqlResult result in resultsPriceSpec.Results)
+            {
+                if (!String.IsNullOrEmpty(result.Value("Amount").ToString()))
+                {
+                    contract.Amount = ((ILiteralNode)result.Value("Amount")).Value;
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("Currency").ToString()))
+                {
+                    contract.Currency = result.Value("Currency").ToString();
+                }
+            }
 
             foreach (SparqlResult result in results.Results)
             {
@@ -231,16 +240,7 @@ namespace ContractViewer.Controllers
                                 {
                                     contract.Anonymised = ((ILiteralNode)node).Value;
                                 }
-
-
-                                if (predicate == "hasCurrency")
-                                {
-                                    contract.Currency = ((ILiteralNode)node).Value;
-                                }
-                                if (predicate == "hasCurrencyValue")
-                                {
-                                    contract.Amount = ((ILiteralNode)node).Value;
-                                }
+                                
                                 break;
 
                             case NodeType.Uri:
@@ -265,6 +265,56 @@ namespace ContractViewer.Controllers
             return contract;
         }
 
+        public IEnumerable<Publisher> GetPublishers()
+        {
+            var subjects = new List<Publisher>();
+
+            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetNumberOfContracts };
+
+            var slodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
+            SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
+
+            foreach (SparqlResult result in slotResults.Results)
+            {
+                var publisher = new Publisher();
+                if (!String.IsNullOrEmpty(result.Value("Subject").ToString()))
+                {
+                    publisher.Name = result.Value("Subject").ToString();
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("Ic").ToString()))
+                {
+                    publisher.ID = result.Value("Ic").ToString();
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("AresLink").ToString()))
+                {
+                    publisher.AresUrl = result.Value("AresLink").ToString();
+                }
+
+                if (!String.IsNullOrEmpty(result.Value("ContractSum").ToString()))
+                {
+                    publisher.NumberOfContracts = Convert.ToInt32(((ILiteralNode)result.Value("ContractSum")).Value);
+                }
+
+                GetPublisherCoordinates(ref publisher);
+                // When linked.data.cz/sparql failed
+                //if (publisher.Name == "Třebíč")
+                //{
+                //    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)49.22, Longitude = (decimal)15.88 };
+                //}
+                //if (publisher.Name == "Děčín")
+                //{
+                //    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)50.7736, Longitude = (decimal)14.1961 };
+                //}
+                GetPublisherImage(ref publisher, publisher.Name);
+
+                subjects.Add(publisher);
+            }
+
+            return subjects;
+        }
+
         public Publisher GetPublisher(string publisherName)
         {
             var publisher = new Publisher { Name = publisherName };
@@ -278,44 +328,6 @@ namespace ContractViewer.Controllers
             GetPublisherImage(ref publisher, publisherName);
 
             return publisher;
-        }
-
-        public IEnumerable<Publisher> SetPublishers()
-        {
-            var subjects = new List<Publisher>();
-
-            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetNumberOfContracts };
-
-            var slodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
-            SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
-
-            foreach (SparqlResult result in slotResults.Results)
-            {
-                var publisher = new Publisher();
-                if (!String.IsNullOrEmpty(result.Value("Institute").ToString()))
-                {
-                    publisher.Name = result.Value("Institute").ToString();
-                }
-
-                if (!String.IsNullOrEmpty(result.Value("ContractSum").ToString()))
-                {
-                    publisher.NumberOfContracts = Convert.ToInt32(((ILiteralNode)result.Value("ContractSum")).Value);
-                }
-
-                //TODO
-                if (publisher.Name == "Třebíč")
-                {
-                    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)49.22, Longitude = (decimal)15.88 };
-                }
-                if (publisher.Name == "Děčín")
-                {
-                    publisher.GeoPoint = new GeoPoint {Latitude = (decimal) 50.7736, Longitude = (decimal) 14.1961};
-                }
-
-                subjects.Add(publisher);
-            }
-
-            return subjects;
         }
 
         private void GetPublisherByName(ref Publisher publisher, string publisherName)
@@ -387,7 +399,7 @@ namespace ContractViewer.Controllers
                         }
                     }
 
-                    SetOpeningHours(result, localPlace.OpeningHours);
+                    GetOpeningHours(result, localPlace.OpeningHours);
 
                     if (localPlaces.All(l => l.Url != localPlaceStr))
                     {
@@ -399,7 +411,7 @@ namespace ContractViewer.Controllers
             publisher.LocalPlaces = localPlaces;
         }
 
-        private void SetOpeningHours(SparqlResult result, SortedDictionary<DayOfWeekCz, ICollection<OpeningHour>> openingHours)
+        private void GetOpeningHours(SparqlResult result, SortedDictionary<DayOfWeekCz, ICollection<OpeningHour>> openingHours)
         {
             if (!String.IsNullOrEmpty(result.Value("dayOfWeek").ToString()))
             {

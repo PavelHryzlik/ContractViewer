@@ -103,7 +103,16 @@
                       {
                           Template =
                             {
-                                Content = () => ViewContext.Writer.Write(obj.Name)
+                                Content = () => ViewContext.Writer.Write(
+                                    "<text>" +
+                                        "<div>" +
+                                            "<h2>Město " + @Html.ActionLink(obj.Name, "SubjectDetail", new {obj.Name}) + "</h2>" +
+                                            ((!String.IsNullOrEmpty(obj.ImageUrl)) ? "<img class=\"img-thumbnail\" alt=\"\" src=\"" + @Url.Content(obj.ImageUrl) + "\"/>" : String.Empty) +
+                                            "<hr/>" +
+                                            "<p class=\"lead\"><strong>IČ: </strong><a href=\"" + obj.AresUrl  + "\">" + obj.ID + "</a><br/>" +
+                                            "<strong>Počet otevřených smluv: </strong>" + obj.NumberOfContracts + "</p>" +
+                                        "</div>" +
+                                    "</text>")
                             }
                       };
                   }));

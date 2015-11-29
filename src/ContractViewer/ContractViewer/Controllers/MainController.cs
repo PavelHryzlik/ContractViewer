@@ -14,7 +14,7 @@ namespace ContractViewer.Controllers
         {
             var indexViewModel = new IndexViewModel
             {
-                Subjects = _handler.SetPublishers(),
+                Subjects = _handler.GetPublishers(),
                 GoogleMap = new GoogleMapViewModel(),
                 Contracts = _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContracts)
             };

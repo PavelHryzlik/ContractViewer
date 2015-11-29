@@ -23,7 +23,7 @@ namespace ContractViewerTest
                 // Test main page data
                 for (int i = 0; i < 50; i++)
                 {
-                    _handler.SetPublishers();
+                    _handler.GetPublishers();
                     _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContracts);
                 }
                 Console.WriteLine(stopWatch.ElapsedMilliseconds + "ms");

@@ -15,15 +15,26 @@ namespace ContractViewer.Controllers
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
 
-                SELECT ?Institute (COUNT(?Contract) as ?ContractSum)
+                SELECT ?Publisher 
+                        (SAMPLE(?subject) AS ?Subject)
+                        (SAMPLE(?ic) AS ?Ic)
+                        (SAMPLE(?aresLink ) AS ?AresLink)
+                        (COUNT(?Contract) as ?ContractSum) 
                 WHERE 
                 { 
-                   ?Contract a cn:Contract ;
-                               dc:publisher ?Publisher.
+                    ?Contract a cn:Contract ;
+                                dc:publisher ?Publisher.
     
-                   ?Publisher gr:legalName ?Institute .
+                    ?Publisher gr:legalName ?subject;
+                                dc:identifier ?ic .
+
+                    OPTIONAL
+                    {
+                        ?Publisher owl:sameAs ?aresLink .
+                    }
+
                 }
-                GROUP BY ?Institute";
+                GROUP BY ?Publisher";
 
             public const string GetContracts =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
@@ -84,6 +95,18 @@ namespace ContractViewer.Controllers
                     ?PriceSpec gr:hasCurrencyValue ?Amount .
 
                     ?PublisherLink gr:legalName @publisher .
+                }";
+
+            public const string GetPriceSpecByContract =
+                @"PREFIX cn: <http://tiny.cc/open-contracting#>
+                PREFIX gr: <http://purl.org/goodrelations/v1#>
+                SELECT ?Uri ?Amount ?Currency
+                WHERE 
+                { 
+                   <http://localhost:7598/contract/39/1> cn:amount ?Uri .
+
+                   ?Uri gr:hasCurrencyValue ?Amount ;
+                        gr:hasCurrency ?Currency .
                 }";
 
             public const string GetAmendmentsByContract =
