@@ -10,14 +10,13 @@ namespace ContractViewer.Controllers
 
             public const string GetContract = "SELECT * WHERE { @contract ?p ?o }";
 
-            public const string GetNumberOfContracts =
+            public const string GetPublishers =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
 
-                SELECT ?Publisher 
+                SELECT ?Publisher ?Ic
                         (SAMPLE(?subject) AS ?Subject)
-                        (SAMPLE(?ic) AS ?Ic)
                         (SAMPLE(?aresLink ) AS ?AresLink)
                         (COUNT(?Contract) as ?ContractSum) 
                 WHERE 
@@ -26,7 +25,7 @@ namespace ContractViewer.Controllers
                                 dc:publisher ?Publisher.
     
                     ?Publisher gr:legalName ?subject;
-                                dc:identifier ?ic .
+                                dc:identifier ?Ic .
 
                     OPTIONAL
                     {
@@ -34,7 +33,7 @@ namespace ContractViewer.Controllers
                     }
 
                 }
-                GROUP BY ?Publisher";
+                GROUP BY ?Publisher ?Ic";
 
             public const string GetContracts =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
@@ -42,7 +41,7 @@ namespace ContractViewer.Controllers
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX ps: <https://w3id.org/payswarm#>
 
-                SELECT ?Uri ?Publisher ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
+                SELECT ?Uri ?Publisher ?PublisherId ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
                 WHERE 
                 { 
                     ?Uri a cn:Contract ;
@@ -55,19 +54,19 @@ namespace ContractViewer.Controllers
 
                     ?PriceSpec gr:hasCurrencyValue ?Amount .
 
-                    ?PublisherLink gr:legalName ?Publisher .
+                    ?PublisherLink gr:legalName ?Publisher ;
+                                   dc:identifier ?PublisherId .
                 }";
 
-            public const string GetPublisherByName =
+            public const string GetPublisherByIc =
                 @"PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 
-                SELECT ?publisher ?ic ?aresLink
+                SELECT ?publisher ?aresLink
                 WHERE 
                 { 
-                    ?publisher dc:identifier ?ic ;
-                                gr:legalName @publisher .
+                    ?publisher dc:identifier @ic .
 
                     OPTIONAL
                     {
@@ -75,7 +74,7 @@ namespace ContractViewer.Controllers
                     }
                 }";
 
-            public const string GetContractsByPublisherName =
+            public const string GetContractsByPublisherIc =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
@@ -94,7 +93,7 @@ namespace ContractViewer.Controllers
 
                     ?PriceSpec gr:hasCurrencyValue ?Amount .
 
-                    ?PublisherLink gr:legalName @publisher .
+                    ?PublisherLink dc:identifier @ic .
                 }";
 
             public const string GetPriceSpecByContract =
@@ -103,10 +102,26 @@ namespace ContractViewer.Controllers
                 SELECT ?Uri ?Amount ?Currency
                 WHERE 
                 { 
-                   <http://localhost:7598/contract/39/1> cn:amount ?Uri .
+                   @contract cn:amount ?Uri .
 
                    ?Uri gr:hasCurrencyValue ?Amount ;
                         gr:hasCurrency ?Currency .
+                }";
+
+            public const string GetVersionsByContract =
+                @"PREFIX cn: <http://tiny.cc/open-contracting#>
+                PREFIX dc: <http://purl.org/dc/terms/>
+
+                SELECT ?Uri ?Issued ?ContractUri ?VersionOrder
+                WHERE 
+                {          
+                ?Contract cn:version ?Uri.
+
+                ?Uri dc:issued ?Issued ;
+                cn:uri ?ContractUri ;
+                cn:versionOrder ?VersionOrder.    
+
+                FILTER regex(?Contract, @contract) 
                 }";
 
             public const string GetAmendmentsByContract =
@@ -124,7 +139,7 @@ namespace ContractViewer.Controllers
                            cn:contract @contract .
                 }";
 
-            public const string GetAttachmentsContract =
+            public const string GetAttachmentsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX com: <https://w3id.org/commerce#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -184,7 +199,7 @@ namespace ContractViewer.Controllers
         {
             public const string SparqlEndpointUri = "http://cs.dbpedia.org/sparql";
 
-            public const string GetPublisherInfo =
+            public const string GetPublisherImage =
                 @"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
                 

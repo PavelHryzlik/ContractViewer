@@ -18,6 +18,7 @@ namespace ContractViewerTest
         {
             var stopWatch = Stopwatch.StartNew();
             var publisher = "Třebíč";
+            var publisherId = "00290629";
 
             using (StreamWriter sw = new StreamWriter(@"output.txt"))
             {
@@ -55,8 +56,8 @@ namespace ContractViewerTest
                     var test2Results = new List<long>();
                     for (int i = 0; i < 50; i++)
                     {
-                        _handler.GetPublisher(publisher);
-                        _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherName, "publisher", publisher, LocalNodeType.Literal);
+                        _handler.GetPublisher(publisher, publisherId);
+                        _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherIc, "publisher", publisher, LocalNodeType.Literal);
 
                         long test2Elapsed = stopWatch.ElapsedMilliseconds;
                         test2Results.Add(test2Elapsed);
@@ -86,7 +87,7 @@ namespace ContractViewerTest
                         var contract = _handler.GetContract("http://localhost:7598/", "51", "1", publisher);
 
                         _handler.GetEntities<Party>(Constants.StudentOpenDataCz.GetPartiesByContract, "contract", contract.Uri, LocalNodeType.Uri);
-                        _handler.GetEntities<Attachment>(Constants.StudentOpenDataCz.GetAttachmentsContract, "contract", contract.Uri, LocalNodeType.Uri);
+                        _handler.GetEntities<Attachment>(Constants.StudentOpenDataCz.GetAttachmentsByContract, "contract", contract.Uri, LocalNodeType.Uri);
                         _handler.GetEntities<Amendment>(Constants.StudentOpenDataCz.GetAmendmentsByContract, "contract", contract.Uri, LocalNodeType.Uri);
                         _handler.GetEntities<Milestone>(Constants.StudentOpenDataCz.GetMilestonesByContract, "contract", contract.Uri, LocalNodeType.Uri);
 

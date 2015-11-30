@@ -10,5 +10,6 @@ namespace ContractViewer.Models
         public IEnumerable<Amendment> Amendments { get; set; }
         public IEnumerable<Attachment> Attachments { get; set; }
         public IEnumerable<Milestone> Milestones { get; set; }
+        public IEnumerable<Version> Versions { get; set; }
     }
 }

@@ -269,7 +269,7 @@ namespace ContractViewer.Controllers
         {
             var subjects = new List<Publisher>();
 
-            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetNumberOfContracts };
+            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetPublishers };
 
             var slodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
             SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
@@ -298,7 +298,7 @@ namespace ContractViewer.Controllers
                 }
 
                 GetPublisherCoordinates(ref publisher);
-                // When linked.data.cz/sparql failed
+                //// When linked.data.cz/sparql failed
                 //if (publisher.Name == "Třebíč")
                 //{
                 //    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)49.22, Longitude = (decimal)15.88 };
@@ -307,19 +307,23 @@ namespace ContractViewer.Controllers
                 //{
                 //    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)50.7736, Longitude = (decimal)14.1961 };
                 //}
+                //if (publisher.Name == "Praha")
+                //{
+                //    publisher.GeoPoint = new GeoPoint { Latitude = (decimal)50.0880400, Longitude = (decimal)14.4207600 };
+                //}
                 GetPublisherImage(ref publisher, publisher.Name);
-
+                
                 subjects.Add(publisher);
             }
 
             return subjects;
         }
 
-        public Publisher GetPublisher(string publisherName)
+        public Publisher GetPublisher(string publisherName, string publisherId)
         {
-            var publisher = new Publisher { Name = publisherName };
+            var publisher = new Publisher { Name = publisherName, ID = publisherId };
 
-            GetPublisherByName(ref publisher, publisherName);
+            GetPublisherByName(ref publisher);
 
             GetPublisherOpeningHours(ref publisher);
 
@@ -330,10 +334,10 @@ namespace ContractViewer.Controllers
             return publisher;
         }
 
-        private void GetPublisherByName(ref Publisher publisher, string publisherName)
+        private void GetPublisherByName(ref Publisher publisher)
         {
-            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetPublisherByName };
-            slodQueryString.SetLiteral("publisher", publisherName);
+            var slodQueryString = new SparqlParameterizedString { CommandText = Constants.StudentOpenDataCz.GetPublisherByIc };
+            slodQueryString.SetLiteral("ic", publisher.ID);
 
             var slodEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.StudentOpenDataCz.SparqlEndpointUri));
             SparqlResultSet slotResults = slodEndpoint.QueryWithResultSet(slodQueryString.ToString());
@@ -343,11 +347,6 @@ namespace ContractViewer.Controllers
                 if (!String.IsNullOrEmpty(result.Value("publisher").ToString()))
                 {
                     publisher.Url = result.Value("publisher").ToString();
-                }
-
-                if (!String.IsNullOrEmpty(result.Value("ic").ToString()))
-                {
-                    publisher.ID = result.Value("ic").ToString();
                 }
 
                 if (!String.IsNullOrEmpty(result.Value("aresLink").ToString()))
@@ -479,7 +478,7 @@ namespace ContractViewer.Controllers
 
         private void GetPublisherImage(ref Publisher publisher, string publisherName)
         {
-            var dbpdQueryString = new SparqlParameterizedString { CommandText = Constants.CsDbpediaOrg.GetPublisherInfo };
+            var dbpdQueryString = new SparqlParameterizedString { CommandText = Constants.CsDbpediaOrg.GetPublisherImage };
             dbpdQueryString.SetLiteral("publisher", publisherName);
 
             var dbpdEndpoint = new SparqlRemoteEndpoint(new Uri(Constants.CsDbpediaOrg.SparqlEndpointUri));

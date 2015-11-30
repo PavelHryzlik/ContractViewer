@@ -189,9 +189,24 @@
         </div>
 
         <div class="row" style="@(Model.Milestones.Any() ? "display:block" : "display:none")">
-            <hr />
+            <hr/>
             <h4>Milníky</h4>
             @Html.Grid(Model.Milestones).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+        </div>
+
+        <div class="row" style="@(Model.Versions.Any() ? "display:block" : "display:none")">
+            <hr />
+            <h4>Verze smlouvy</h4>
+            @Html.Grid(Model.Versions).Columns(columns =>
+            {
+                columns.Add(model => model.VersionOrder).Titled("Číslo verze");
+                columns.Add(model => model.Issued).Titled("Datum publikace").Format("{0:dd/MM/yyyy hh:mm:ss}");
+                columns.Add(model => model.Uri).Titled("Identifikátor verze")
+            .Encoded(false)
+            .Sanitized(false)
+            .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Uri)>@d.Uri</a> );
+
+            }).WithPaging(10).Sortable().Filterable()
         </div>
     </div>
 </div>

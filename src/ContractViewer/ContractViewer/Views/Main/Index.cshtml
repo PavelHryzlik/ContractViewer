@@ -87,7 +87,7 @@
                   (circle, obj) =>
                   {
                       circle.Center = new Location((double)obj.GeoPoint.Latitude, (double)obj.GeoPoint.Longitude);
-                      circle.Radius = obj.NumberOfContracts * 2000;
+                      circle.Radius = (int)(Math.Pow((double)obj.NumberOfContracts,0.1) * 10000);
                       circle.Clickable = true;
                   }));
           })
@@ -144,7 +144,7 @@
                 .Sanitized(false)
                 .RenderValueAs(d =>
                     @<b>
-                        @Html.ActionLink(d.Publisher, "SubjectDetail", new {d.Publisher})
+                        @Html.ActionLink(d.Publisher, "SubjectDetail", new {d.Publisher, d.PublisherId})
                     </b>);
 
         }).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
