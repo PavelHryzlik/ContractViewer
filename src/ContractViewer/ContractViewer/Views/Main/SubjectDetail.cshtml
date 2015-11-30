@@ -32,16 +32,11 @@
 
     </div>
     <div class="col-md-6">
-        <dl class="dl-horizontal">
-            <dt>
-                IČ
-            </dt>
-
-            <dd>
-                @{
+        <div class="row">
+            <h4> IČ - @{
                     if (!String.IsNullOrEmpty(Model.Publisher.ID))
                     {
-                        @Html.ActionLink(Model.Publisher.ID, "PublicContracts", new {Model.Publisher.Name, ID = Model.Publisher.ID})
+                        @Html.ActionLink(Model.Publisher.ID + " (veřejné zakázky subjektu)", "PublicContracts", new { Model.Publisher.Name, ID = Model.Publisher.ID })
                     }
                     else
                     {
@@ -49,31 +44,33 @@
                     }
 
                 }
-            </dd>
-        </dl>
+            </h4>
+        </div>
+        <div class="row">
+            @foreach (var localPlace in Model.Publisher.LocalPlaces)
+            {
+                <h4> Budova - @localPlace.StreetAddress PSČ @localPlace.PostalCode </h4>
 
-        @foreach (var localPlace in Model.Publisher.LocalPlaces)
-        {
-            <h4> Budova - @localPlace.StreetAddress PSČ @localPlace.PostalCode </h4>
+                <h5> Otevírací doba </h5>
 
-            <h5> Otevírací doba </h5>
-
-            <dl class="dl-horizontal">
-                @foreach (var openingHourOfTheDay in localPlace.OpeningHours)
+                <dl class="dl-horizontal">
+                    @foreach (var openingHourOfTheDay in localPlace.OpeningHours)
                 {
-                    <dt>
-                        @openingHourOfTheDay.Key.ToName()
-                    </dt>
+                        <dt>
+                            @openingHourOfTheDay.Key.ToName()
+                        </dt>
 
-                    <dd>
-                        @foreach (var openingHour in openingHourOfTheDay.Value)
-                        {
-                            <text>@openingHour.Open.ToString(@"hh\:mm") - @openingHour.Close.ToString(@"hh\:mm") </text>
-                        }
-                    </dd>
-                }
-            </dl>
-        }
+                        <dd>
+                            @foreach (var openingHour in openingHourOfTheDay.Value)
+                            {
+                                <text>@openingHour.Open.ToString(@"hh\:mm") - @openingHour.Close.ToString(@"hh\:mm") </text>
+                            }
+                        </dd>
+                    }
+                </dl>
+            }
+
+        </div>
     </div>
 </div>
 

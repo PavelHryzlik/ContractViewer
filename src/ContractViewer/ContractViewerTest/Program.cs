@@ -57,7 +57,7 @@ namespace ContractViewerTest
                     for (int i = 0; i < 50; i++)
                     {
                         _handler.GetPublisher(publisher, publisherId);
-                        _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherIc, "publisher", publisher, LocalNodeType.Literal);
+                        _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherIc, "publisherId", publisherId, LocalNodeType.Literal);
 
                         long test2Elapsed = stopWatch.ElapsedMilliseconds;
                         test2Results.Add(test2Elapsed);

@@ -29,7 +29,7 @@ namespace ContractViewer.Controllers
             var publisherViewModel = new PublisherViewModel
             {
                 Publisher = _handler.GetPublisher(publisher, publisherId),
-                Contracts = _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherIc, "publisherId", publisher, LocalNodeType.Literal)
+                Contracts = _handler.GetEntities<Contract>(Constants.StudentOpenDataCz.GetContractsByPublisherIc, "publisherId", publisherId, LocalNodeType.Literal)
             };
 
             return View(publisherViewModel);

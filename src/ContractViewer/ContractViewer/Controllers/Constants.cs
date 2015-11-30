@@ -93,7 +93,7 @@ namespace ContractViewer.Controllers
 
                     ?PriceSpec gr:hasCurrencyValue ?Amount .
 
-                    ?PublisherLink dc:identifier @ic .
+                    ?PublisherLink dc:identifier @publisherId .
                 }";
 
             public const string GetPriceSpecByContract =
@@ -256,7 +256,7 @@ namespace ContractViewer.Controllers
                 PREFIX pccz: <http://purl.org/procurement/public-contracts-czech#>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?Uri ?KodProfil ?Title ?SupplierUri ?ID ?Amount ?Vat
+                SELECT DISTINCT ?Uri ?ContractId ?EvNumber ?Title ?SupplierUri ?ID ?Amount ?Vat
                 WHERE 
                 {
                   ?Uri pc:contractingAuthority @businessEntity ;
@@ -264,7 +264,8 @@ namespace ContractViewer.Controllers
      
                   OPTIONAL 
                   {
-                    ?Uri pccz:kodprofil ?KodProfil ;
+                    ?Uri pccz:kodprofil ?ContractId ;
+                         pccz:kodusvzis ?EvNumber  ;
                          pco:awardedTender ?Tender .
                     ?Tender pco:offeredPrice ?PriceSpec ;
                             pco:supplier ?SupplierUri . 

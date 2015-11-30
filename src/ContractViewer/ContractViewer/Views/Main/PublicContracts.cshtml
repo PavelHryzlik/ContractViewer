@@ -12,7 +12,11 @@
         <hr />
 
         <div class="row">
-            @Html.Grid(Model.PublicContract).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
+            @Html.Grid(Model.PublicContract).Columns(columns => columns.Add(model => model.EvNumber)
+        .Titled("Evidenční číslo ISVZUS")
+        .Encoded(false)
+        .Sanitized(false)
+        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode("http://linked.opendata.cz/resource/domain/buyer-profiles/contract/cz/" + d.EvNumber)>@d.EvNumber</a> )).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
         </div>
     </div>
 </div>

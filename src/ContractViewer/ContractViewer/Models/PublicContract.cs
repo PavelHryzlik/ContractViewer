@@ -13,9 +13,13 @@ namespace ContractViewer.Models
         [Display(Name = "Adresa zdroje")]
         public string Uri { get; set; }
 
-        [Display(Name = "Profil zadavatele")]
-        [GridColumn(Title = "Profil zadavatele")]
-        public string KodProfil { get; set; }
+        [NotMappedColumn]
+        [Display(Name = "Evidenční číslo ISVZUS")]
+        public string EvNumber { get; set; }
+
+        [Display(Name = "Identifikátor zakázky")]
+        [GridColumn(Title = "Identifikátor zakázky")]
+        public string ContractId { get; set; }
 
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]
