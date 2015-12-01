@@ -39,7 +39,6 @@ namespace ContractViewer.Controllers
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
-                PREFIX ps: <https://w3id.org/payswarm#>
 
                 SELECT ?Uri ?Publisher ?PublisherId ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
                 WHERE 
@@ -48,7 +47,7 @@ namespace ContractViewer.Controllers
                             dc:title ?Title ;
                             cn:contractType ?ContractType ; 
                             dc:created ?DateSigned ;
-                            ps:validFrom  ?ValidFrom ;
+                            cn:validFrom  ?ValidFrom ;
                             dc:publisher ?PublisherLink ;
                             cn:amount ?PriceSpec .
 
@@ -78,7 +77,6 @@ namespace ContractViewer.Controllers
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
-                PREFIX ps: <https://w3id.org/payswarm#>
 
                 SELECT ?Uri ?Title ?ContractType ?DateSigned ?ValidFrom ?Amount
                 WHERE 
@@ -87,7 +85,7 @@ namespace ContractViewer.Controllers
                             dc:title ?Title ;
                             cn:contractType ?ContractType ; 
                             dc:created ?DateSigned ;
-                            ps:validFrom  ?ValidFrom ;
+                            cn:validFrom  ?ValidFrom ;
                             dc:publisher ?PublisherLink ;
                             cn:amount ?PriceSpec .
 
@@ -126,8 +124,8 @@ namespace ContractViewer.Controllers
 
             public const string GetAmendmentsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
-                PREFIX com: <https://w3id.org/commerce#>
                 PREFIX dc: <http://purl.org/dc/terms/>
+                PREFIX schema: <http://schema.org/>
 
                 SELECT ?Uri ?Title ?DateSigned ?Document
                 WHERE 
@@ -135,21 +133,21 @@ namespace ContractViewer.Controllers
                     ?Uri a cn:Amendment ;
                            dc:title ?Title ;
                            dc:created ?DateSigned ;
-                           com:contentUrl  ?Document ;
+                           schema:url  ?Document ;
                            cn:contract @contract .
                 }";
 
             public const string GetAttachmentsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
-                PREFIX com: <https://w3id.org/commerce#>
                 PREFIX dc: <http://purl.org/dc/terms/>
+                PREFIX schema: <http://schema.org/>
 
                 SELECT ?Uri ?Title ?Document
                 WHERE 
                 { 
                    ?Uri a cn:Attachment ;
                           dc:title ?Title ;
-                          com:contentUrl  ?Document ;
+                          schema:url  ?Document ;
                           cn:contract @contract .
                 }";
 
