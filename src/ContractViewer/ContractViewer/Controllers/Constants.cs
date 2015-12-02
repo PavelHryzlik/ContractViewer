@@ -165,7 +165,7 @@ namespace ContractViewer.Controllers
                           gr:legalName ?Name ;
                           schema:addressCountry ?Country ;
                           schema:address ?Address ;
-                          gr:valueAddedTaxIncluded ?PaysVAT .
+                          cn:paysVAT ?PaysVAT .
 
                    OPTIONAL {?Uri dc:identifier ?ID}
 

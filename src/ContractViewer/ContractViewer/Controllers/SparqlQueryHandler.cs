@@ -238,7 +238,10 @@ namespace ContractViewer.Controllers
                                 }
                                 if (predicate == "anonymised")
                                 {
-                                    contract.Anonymised = ((ILiteralNode)node).Value;
+                                    if (node is BooleanNode)
+                                    {
+                                        contract.Anonymised = ((BooleanNode)node).AsBoolean() ? "Ano" : "Ne";
+                                    }  
                                 }
                                 
                                 break;
@@ -246,7 +249,7 @@ namespace ContractViewer.Controllers
                             case NodeType.Uri:
                                 var uri = (IUriNode)value;
 
-                                if (predicate == "contentUrl")
+                                if (predicate == "url")
                                 {
                                     contract.Document = uri.Uri.ToString();
                                 }
