@@ -4,7 +4,7 @@ using VDS.RDF;
 using VDS.RDF.Nodes;
 using VDS.RDF.Parsing;
 
-namespace ContractViewer.Controllers
+namespace ContractViewer.Utils
 {
     public static class W3CSpecHelper
     {

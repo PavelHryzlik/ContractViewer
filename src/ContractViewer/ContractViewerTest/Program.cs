@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using ContractViewer.Controllers;
+using ContractViewer.Handlers;
 using ContractViewer.Models;
 
 namespace ContractViewerTest

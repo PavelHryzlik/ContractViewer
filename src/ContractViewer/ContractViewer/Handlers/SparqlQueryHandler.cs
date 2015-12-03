@@ -2,13 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using ContractViewer.Models;
-using VDS.RDF.Query;
 using System.Reflection;
+using ContractViewer.Controllers;
+using ContractViewer.Models;
+using ContractViewer.Utils;
 using VDS.RDF;
 using VDS.RDF.Nodes;
+using VDS.RDF.Query;
 
-namespace ContractViewer.Controllers
+namespace ContractViewer.Handlers
 {
     /// <summary>
     /// Enum of type of RDF object

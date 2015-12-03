@@ -1,4 +1,4 @@
-﻿namespace ContractViewer.Controllers
+﻿namespace ContractViewer.Handlers
 {
     public static class Constants
     {
