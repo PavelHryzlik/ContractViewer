@@ -1,15 +1,22 @@
-﻿using System;
-
-namespace ContractViewer.Controllers
+﻿namespace ContractViewer.Controllers
 {
     public static class Constants
     {
+        /// <summary>
+        /// SPARQL queries over the http://student.opendata.cz/sparql endpoint
+        /// </summary>
         public static class StudentOpenDataCz
         {
             public const string SparqlEndpointUri = "http://student.opendata.cz/sparql";
 
+            /// <summary>
+            /// SPARQL query - Get contract by contract URI
+            /// </summary>
             public const string GetContract = "SELECT * WHERE { @contract ?p ?o }";
 
+            /// <summary>
+            /// SPARQL query - Get all publishers
+            /// </summary>
             public const string GetPublishers =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -35,6 +42,9 @@ namespace ContractViewer.Controllers
                 }
                 GROUP BY ?Publisher ?Ic";
 
+            /// <summary>
+            /// SPARQL query - Get all contracts
+            /// </summary>
             public const string GetContracts =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -57,6 +67,9 @@ namespace ContractViewer.Controllers
                                    dc:identifier ?PublisherId .
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get publisher by his IC
+            /// </summary>
             public const string GetPublisherByIc =
                 @"PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
@@ -73,6 +86,9 @@ namespace ContractViewer.Controllers
                     }
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get all contracts of the publisher by his IC
+            /// </summary>
             public const string GetContractsByPublisherIc =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -94,6 +110,9 @@ namespace ContractViewer.Controllers
                     ?PublisherLink dc:identifier @publisherId .
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get price specification of the contract
+            /// </summary>
             public const string GetPriceSpecByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
@@ -106,6 +125,9 @@ namespace ContractViewer.Controllers
                         gr:hasCurrency ?Currency .
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get all versions of the contract
+            /// </summary>
             public const string GetVersionsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -122,6 +144,10 @@ namespace ContractViewer.Controllers
                 FILTER regex(?Contract, @contract) 
                 }";
 
+
+            /// <summary>
+            /// SPARQL query - Get all amendments of the contract
+            /// </summary>
             public const string GetAmendmentsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -137,6 +163,9 @@ namespace ContractViewer.Controllers
                            cn:contract @contract .
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get all attachments of the contract
+            /// </summary>
             public const string GetAttachmentsByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -151,13 +180,16 @@ namespace ContractViewer.Controllers
                           cn:contract @contract .
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get all parties of the contract
+            /// </summary>
             public const string GetPartiesByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>
 
-                SELECT ?ID ?Uri ?Name ?Country ?PaysVAT ?StreetAddres ?Locality ?PostalCode 
+                SELECT ?Id ?Uri ?Name ?Country ?PaysVat ?StreetAddres ?Locality ?PostalCode 
                 WHERE 
                 { 
                    @contract cn:party ?Uri .
@@ -165,9 +197,9 @@ namespace ContractViewer.Controllers
                           gr:legalName ?Name ;
                           schema:addressCountry ?Country ;
                           schema:address ?Address ;
-                          cn:paysVAT ?PaysVAT .
+                          cn:paysVAT ?PaysVat .
 
-                   OPTIONAL {?Uri dc:identifier ?ID}
+                   OPTIONAL {?Uri dc:identifier ?Id}
 
                    ?Address a schema:PostalAddress ;
                               schema:streetAddres ?StreetAddres ;
@@ -175,6 +207,9 @@ namespace ContractViewer.Controllers
                               schema:postalCode ?PostalCode .       
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get all milestones of the contract
+            /// </summary>
             public const string GetMilestonesByContract =
                 @"PREFIX cn: <http://tiny.cc/open-contracting#>
                 PREFIX dc: <http://purl.org/dc/terms/>
@@ -193,10 +228,16 @@ namespace ContractViewer.Controllers
                 }";
         }
 
+        /// <summary>
+        /// SPARQL queries over the http://cs.dbpedia.org/sparql endpoint
+        /// </summary>
         public static class CsDbpediaOrg
         {
             public const string SparqlEndpointUri = "http://cs.dbpedia.org/sparql";
 
+            /// <summary>
+            /// SPARQL query - Get image from DBpedia by subject name
+            /// </summary>
             public const string GetPublisherImage =
                 @"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX dbpedia-owl: <http://dbpedia.org/ontology/>
@@ -208,10 +249,17 @@ namespace ContractViewer.Controllers
                 }";
         }
 
+        /// <summary>
+        /// SPARQL queries over the http://linked.opendata.cz/sparql endpoint
+        /// </summary>
         public static class LinkedOpenDataCz
         {
             public const string SparqlEndpointUri = "http://linked.opendata.cz/sparql";
 
+            /// <summary>
+            /// SPARQL query - Get opening hours business entity from public authorities
+            /// Using "reverse" predicate http://linked.opendata.cz/ontology/domain/seznam.gov.cz/ovm/business-entity
+            /// </summary>
             public const string GetBusinessEntityOpeningHours =
                 @"PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>
@@ -231,8 +279,11 @@ namespace ContractViewer.Controllers
                     ?openingHours gr:hasOpeningHoursDayOfWeek ?dayOfWeek ;
                                 gr:opens ?open ;
                                 gr:closes ?close .
-                } ";
+                }";
 
+            /// <summary>
+            /// SPARQL query - Get RÚIAN link (addressPoint) by business entity (through ARES adsress link)
+            /// </summary>
             public const string GetBusinessEntityRuianLink =
                 @"PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>
@@ -242,11 +293,15 @@ namespace ContractViewer.Controllers
                 {
                   @businessEntity s:address ?address .
 
-                  ?address  ruianlink:adresni-misto ?ruianLink .
+                  ?address ruianlink:adresni-misto ?ruianLink .
                                                                 
                   FILTER(CONTAINS(str(?address), 'ares'))
                 }";
 
+            /// <summary>
+            /// SPARQL query - Get public contracts by business entity
+            /// Using "reverse" predicate http://purl.org/procurement/public-contracts#
+            /// </summary>
             public const string GetBusinessEntityPublicContracts =
                 @"PREFIX dc: <http://purl.org/dc/terms/>
                 PREFIX gr: <http://purl.org/goodrelations/v1#>
@@ -254,7 +309,7 @@ namespace ContractViewer.Controllers
                 PREFIX pccz: <http://purl.org/procurement/public-contracts-czech#>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?Uri ?ContractId ?EvNumber ?Title ?SupplierUri ?ID ?Amount ?Vat
+                SELECT DISTINCT ?Uri ?ContractId ?EvNumber ?Title ?SupplierUri ?Id ?Amount ?Vat
                 WHERE 
                 {
                   ?Uri pc:contractingAuthority @businessEntity ;
@@ -272,17 +327,23 @@ namespace ContractViewer.Controllers
                     BIND(CONCAT(str(?SupplierUri), '/identifier') as ?IcStr)
                     BIND(URI(?IcStr) as ?IcUri)
 
-                    ?IcUri skos:notation ?ID .
+                    ?IcUri skos:notation ?Id .
                     ?PriceSpec gr:hasCurrencyValue ?Amount ;
                                gr:valueAddedTaxIncluded	1 .
                   }      
                 }";
         }
 
+        /// <summary>
+        /// SPARQL queries over the http://ruian.linked.opendata.cz/sparql endpoint
+        /// </summary>
         public static class RuianLinkedOpenDataCz
         {
             public const string SparqlEndpointUri = "http://ruian.linked.opendata.cz/sparql";
 
+            /// <summary>
+            /// SPARQL query - Get geo coordinates by address point from RÚIAN
+            /// </summary>
             public const string GetBusinessEntityCoordinates =
                 @"PREFIX gr: <http://purl.org/goodrelations/v1#>
                 PREFIX schema: <http://schema.org/>

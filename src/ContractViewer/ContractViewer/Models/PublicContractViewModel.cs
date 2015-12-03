@@ -5,6 +5,9 @@ using System.Web;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents viewmodel for public contracts view
+    /// </summary>
     public class PublicContractViewModel
     {
         public string Id { get; set; }

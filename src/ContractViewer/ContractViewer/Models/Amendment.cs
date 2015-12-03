@@ -4,6 +4,9 @@ using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents amendment entity
+    /// </summary>
     public class Amendment
     {
         [NotMappedColumn]

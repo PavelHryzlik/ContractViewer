@@ -4,6 +4,9 @@ using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents milestone entity
+    /// </summary>
     public class Milestone
     {
         [NotMappedColumn]

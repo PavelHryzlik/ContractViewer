@@ -106,10 +106,10 @@
                                 Content = () => ViewContext.Writer.Write(
                                     "<text>" +
                                         "<div>" +
-                                            "<h2>Město " + @Html.ActionLink(obj.Name, "SubjectDetail", new { Publisher = obj.Name, PublisherId = obj.ID }) + "</h2>" +
+                                            "<h2>Město " + @Html.ActionLink(obj.Name, "SubjectDetail", new { Publisher = obj.Name, PublisherId = obj.Id }) + "</h2>" +
                                             ((!String.IsNullOrEmpty(obj.ImageUrl)) ? "<img class=\"img-thumbnail\" alt=\"\" src=\"" + @Url.Content(obj.ImageUrl) + "\"/>" : String.Empty) +
                                             "<hr/>" +
-                                            "<p class=\"lead\"><strong>IČ: </strong><a href=\"" + obj.AresUrl  + "\">" + obj.ID + "</a><br/>" +
+                                            "<p class=\"lead\"><strong>IČ: </strong><a href=\"" + obj.AresUrl  + "\">" + obj.Id + "</a><br/>" +
                                             "<strong>Počet otevřených smluv: </strong>" + obj.NumberOfContracts + "</p>" +
                                         "</div>" +
                                     "</text>")

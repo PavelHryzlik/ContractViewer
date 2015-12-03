@@ -3,6 +3,9 @@ using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents attachment entity
+    /// </summary>
     public class Attachment
     {
         [NotMappedColumn]

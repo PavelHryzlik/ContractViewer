@@ -3,11 +3,14 @@ using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents party entity
+    /// </summary>
     public class PublicContract
     {
         [Display(Name = "Dodavatel IČ")]
         [GridColumn(Title = "Dodavatel IČ")]
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         [NotMappedColumn]
         [Display(Name = "Adresa zdroje")]

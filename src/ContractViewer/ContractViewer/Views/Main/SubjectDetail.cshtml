@@ -34,9 +34,9 @@
     <div class="col-md-6">
         <div class="row">
             <h4> IČ - @{
-                    if (!String.IsNullOrEmpty(Model.Publisher.ID))
+                    if (!String.IsNullOrEmpty(Model.Publisher.Id))
                     {
-                        @Html.ActionLink(Model.Publisher.ID + " (veřejné zakázky subjektu)", "PublicContracts", new { Model.Publisher.Name, ID = Model.Publisher.ID })
+                        @Html.ActionLink(Model.Publisher.Id + " (veřejné zakázky subjektu)", "PublicContracts", new { Model.Publisher.Name, ID = Model.Publisher.Id })
                     }
                     else
                     {

@@ -3,6 +3,9 @@ using System.Web.Routing;
 
 namespace ContractViewer
 {
+    /// <summary>
+    /// This class registers base route rules.  
+    /// </summary>
     public class RouteConfig
     {
         public static void RegisterRoutes(RouteCollection routes)

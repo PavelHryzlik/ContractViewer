@@ -2,6 +2,9 @@
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents viewmodel for contract detail view
+    /// </summary>
     public class ContractViewModel
     {
         public Contract Contract { get; set; }

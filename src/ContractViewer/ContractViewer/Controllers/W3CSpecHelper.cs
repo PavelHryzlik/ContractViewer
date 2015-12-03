@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Linq;
 using VDS.RDF;
 using VDS.RDF.Nodes;
@@ -10,10 +9,10 @@ namespace ContractViewer.Controllers
     public static class W3CSpecHelper
     {
         /// <summary>
-        /// Support only Boolean, DateTime, Date and Time
+        /// Format Boolean, DateTime, Date and Time by WRC spec
         /// </summary>
         /// <param name="node">Input node</param>
-        /// <returns>result node</returns>
+        /// <returns>Formated node</returns>
         public static INode FormatNode(INode node)
         {
             if (node != null &&

@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents version entity
+    /// </summary>
     public class Version
     {
         [NotMappedColumn]

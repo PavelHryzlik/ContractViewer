@@ -4,6 +4,9 @@ using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents party entity
+    /// </summary>
     public class Party
     {
         [NotMappedColumn]
@@ -12,11 +15,11 @@ namespace ContractViewer.Models
 
         [Display(Name = "IČ")]
         [NotMappedColumn]
-        public string ID { get; set; }
+        public string Id { get; set; }
 
         [Display(Name = "Lokální Id")]
         [GridColumn(Title = "Lokální Id")]
-        public string LocalID { get; set; }
+        public string LocalId { get; set; }
 
         [Display(Name = "Název")]
         [GridColumn(Title = "Název")]
@@ -40,20 +43,18 @@ namespace ContractViewer.Models
 
         [Display(Name = "Plátce DPH")]
         [GridColumn(Title = "Plátce DPH")]
-        public string PaysVAT { get; set; }
+        public string PaysVat { get; set; }
 
         [Display(Name = "Adresa")]
         [GridColumn(Title = "Adresa")]
         public string Address 
         { 
-            get 
+            get
             {
                 if (!String.IsNullOrEmpty(StreetAddres) && !String.IsNullOrEmpty(PostalCode) && !String.IsNullOrEmpty(Locality))
                     return StreetAddres + " " + PostalCode + " " + Locality;
-                else
-                    return Address;
+                return Address;
             }
-            set { Address = value; }
         }
     }
 }

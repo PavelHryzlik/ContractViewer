@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Jmelosegui.Mvc.GoogleMap;
+﻿using Jmelosegui.Mvc.GoogleMap;
 
 namespace ContractViewer.Models
 {
+    /// <summary>
+    /// Class represents viewmodel for google map, include base settings 
+    /// </summary>
     public class GoogleMapViewModel
     {
         public GoogleMapViewModel()

@@ -2,6 +2,9 @@
 
 namespace ContractViewer
 {
+    /// <summary>
+    /// This class registers the basic Bootstrap scripts and styles
+    /// </summary>
     public class BundleConfig
     {
         // For more information on bundling, visit http://go.microsoft.com/fwlink/?LinkId=301862
@@ -25,6 +28,7 @@ namespace ContractViewer
             bundles.Add(new ScriptBundle("~/bundles/gridmvc").Include(
                      "~/Scripts/gridmvc.min.js"));
 
+            // Style classes for Grid table
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
