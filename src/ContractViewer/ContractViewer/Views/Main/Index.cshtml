@@ -12,11 +12,11 @@
 <div class="row">
     @{
         Html.GoogleMap()
-          .Name("map")
-          .Height(650)
-          .Center(c => c.Address("Czech republic"))
-          .Zoom(8)
-          .Culture(CultureInfo.GetCultureInfo("cs"))
+          .Name(Model.GoogleMap.MapName)
+          .Height(Model.GoogleMap.Height)
+          .Center(c => c.Address(Model.GoogleMap.Address))
+          .Zoom(Model.GoogleMap.Zoom)
+          .Culture(Model.GoogleMap.Culture)
           .ScaleControlVisible(Model.GoogleMap.ShowScaleControl)
           .PanControlVisible(Model.GoogleMap.ShowPanControl)
           .PanControlPosition(Model.GoogleMap.PanControlPosition)
@@ -77,9 +77,9 @@
                           .Color(ColorTranslator.FromHtml("#46bcec"))
                           .Visibility(MapTypeStylerVisibility.On);
                   })
-                  .MapTypeName("Custom Style")
+                  .MapTypeName("LightBlue Style")
           )
-          .MapTypeId("Custom Style")
+          .MapTypeId("LightBlue Style")
           .BindTo<Publisher, Circle>
           (Model.Subjects, mappings =>
           {

@@ -1,4 +1,5 @@
-﻿using Jmelosegui.Mvc.GoogleMap;
+﻿using System.Globalization;
+using Jmelosegui.Mvc.GoogleMap;
 
 namespace ContractViewer.Models
 {
@@ -9,6 +10,11 @@ namespace ContractViewer.Models
     {
         public GoogleMapViewModel()
         {
+            MapName = "map";
+            Address = "Czech republic";
+            Culture = CultureInfo.GetCultureInfo("cs");
+            Height = 650;
+            Zoom = 8;
             ShowScaleControl = true;
             ShowPanControl = true;
             PanControlPosition = ControlPosition.TopLeft;
@@ -24,6 +30,11 @@ namespace ContractViewer.Models
             MapTypeControlStyle = MapTypeControlStyle.Default;
             MapTypeControlPosition = ControlPosition.TopRight;
         }
+        public string MapName { get; set; }
+        public string Address { get; set; }
+        public CultureInfo Culture { get; set; }
+        public int Height { get; set; }
+        public int Zoom { get; set; }
         public bool ShowScaleControl { get; set; }
         public bool ShowPanControl { get; set; }
         public ControlPosition PanControlPosition { get; set; }
