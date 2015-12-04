@@ -24,6 +24,9 @@ namespace ContractViewer.Utils
                     case XmlSpecsHelper.XmlSchemaDataTypeBoolean:
                         var intBool = Int32.Parse(((ILiteralNode)node).Value);
                         return new BooleanNode(node.Graph, Convert.ToBoolean(intBool));
+                    case XmlSpecsHelper.XmlSchemaDataTypeFloat:
+                        var floatValue = float.Parse(((ILiteralNode)node).Value);
+                        return new FloatNode(node.Graph, floatValue);
 
                     case XmlSpecsHelper.XmlSchemaDataTypeDateTime:
                         var dateTime = DateTime.Parse(((ILiteralNode)node).Value);

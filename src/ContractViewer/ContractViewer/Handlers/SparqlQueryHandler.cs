@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using ContractViewer.Controllers;
 using ContractViewer.Models;
 using ContractViewer.Utils;
 using VDS.RDF;
@@ -108,6 +107,10 @@ namespace ContractViewer.Handlers
                                 {
                                     prop.SetValue(contract, ((BooleanNode)node).AsBoolean() ? "Ano" : "Ne", null);
                                 }
+                                else if (node is FloatNode)
+                                {
+                                    prop.SetValue(contract, ((FloatNode)node).AsFloat(), null);
+                                }
                                 else if (node is DateNode)
                                 {
                                     prop.SetValue(contract, ((DateNode)node).AsDateTime(), null);
@@ -139,19 +142,19 @@ namespace ContractViewer.Handlers
                                     propUri?.SetValue(contract, uri.Uri.Authority.Replace("/", ""), null);
 
                                     propUri = entityType.GetProperty("ContractId");
-                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("Version");
-                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract,  Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("AttachmentId");
-                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("AmendmentId");
-                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
 
-                                    propUri = entityType.GetProperty("LocalID");
-                                    propUri?.SetValue(contract, uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", ""), null);
+                                    propUri = entityType.GetProperty("LocalId");
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
                                 }
 
                                 break;
@@ -198,8 +201,8 @@ namespace ContractViewer.Handlers
             {
                 Uri = contractUri.ToString(),
                 BaseDomain = baseDomain,
-                ContractId = contractId,
-                Version = version,
+                ContractId = Convert.ToInt32(contractId),
+                Version = Convert.ToInt32(version),
                 Publisher = publisher
             };
 
@@ -208,7 +211,7 @@ namespace ContractViewer.Handlers
             {
                 if (!String.IsNullOrEmpty(result.Value("Amount").ToString()))
                 {
-                    contract.Amount = ((ILiteralNode)result.Value("Amount")).Value;
+                    contract.Amount = ((FloatNode) (W3CSpecHelper.FormatNode(result.Value("Amount")))).AsFloat();
                 }
 
                 if (!String.IsNullOrEmpty(result.Value("Currency").ToString()))

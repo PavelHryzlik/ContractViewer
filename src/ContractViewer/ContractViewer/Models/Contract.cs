@@ -20,11 +20,11 @@ namespace ContractViewer.Models
 
         [Display(Name = "Id")]
         [GridColumn(Title = "Lok. Id")]
-        public string ContractId { get; set; }
+        public int ContractId { get; set; }
 
         [Display(Name = "Verze")]
         [GridColumn(Title = "Verze")]
-        public string Version { get; set; }
+        public int Version { get; set; }
 
         [Display(Name = "Publikující")]
         [NotMappedColumn]
@@ -85,11 +85,11 @@ namespace ContractViewer.Models
 
         [Display(Name = "Částka bez DPH")]
         [NotMappedColumn]
-        public string AmountNoVat { get; set; }
+        public float AmountNoVat { get; set; }
 
         [Display(Name = "Částka vč. DPH")]
         [GridColumn(Title = "Částka vč. DPH")]
-        public string Amount { get; set; }
+        public float Amount { get; set; }
 
         [Display(Name = "Měna")]
         [NotMappedColumn]

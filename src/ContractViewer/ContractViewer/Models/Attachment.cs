@@ -22,7 +22,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Id")]
         [GridColumn(Title = "Lokální Id")]
-        public string AttachmentId { get; set; }
+        public int AttachmentId { get; set; }
 
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]

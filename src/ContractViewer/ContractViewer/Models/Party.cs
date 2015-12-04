@@ -19,7 +19,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Lokální Id")]
         [GridColumn(Title = "Lokální Id")]
-        public string LocalId { get; set; }
+        public int LocalId { get; set; }
 
         [Display(Name = "Název")]
         [GridColumn(Title = "Název")]

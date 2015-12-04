@@ -23,7 +23,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Id")]
         [GridColumn(Title = "Lokální Id")]
-        public string AmendmentId { get; set; }
+        public int AmendmentId { get; set; }
 
         [Display(Name = "Číslo dodatku")]
         [GridColumn(Title = "Číslo dodatku")]
