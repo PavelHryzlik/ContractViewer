@@ -22,7 +22,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Identifikátor zakázky")]
         [GridColumn(Title = "Identifikátor zakázky")]
-        public string ContractId { get; set; }
+        public string PublicContractId { get; set; }
 
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]
@@ -31,17 +31,17 @@ namespace ContractViewer.Models
         [Display(Name = "Dodavatel")]
         [GridColumn(Title = "Dodavatel")]
         [NotMappedColumn]
-        public string Supplier { get; set; }
+        public string SupplierName { get; set; }
 
         [NotMappedColumn]
         public string SupplierUri { get; set; }
 
         [Display(Name = "Částka bez DPH")]
         [NotMappedColumn]
-        public string AmountNoVat { get; set; }
+        public decimal AmountNoVat { get; set; }
 
         [Display(Name = "Částka vč. DPH")]
         [GridColumn(Title = "Částka vč. DPH")]
-        public string Amount { get; set; }
+        public decimal Amount { get; set; }
     }
 }

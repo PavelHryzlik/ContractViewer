@@ -107,6 +107,14 @@ namespace ContractViewer.Handlers
                                 {
                                     prop.SetValue(contract, ((BooleanNode)node).AsBoolean() ? "Ano" : "Ne", null);
                                 }
+                                else if (node is LongNode)
+                                {
+                                    prop.SetValue(contract, ((LongNode)node).AsDecimal(), null);
+                                }
+                                else if (node is DecimalNode)
+                                {
+                                    prop.SetValue(contract, ((DecimalNode)node).AsDecimal(), null);
+                                }
                                 else if (node is FloatNode)
                                 {
                                     prop.SetValue(contract, ((FloatNode)node).AsFloat(), null);
@@ -148,9 +156,12 @@ namespace ContractViewer.Handlers
                                     propUri?.SetValue(contract,  Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("AttachmentId");
-                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("AmendmentId");
+                                    propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 2).ToString().Replace("/", "")), null);
+
+                                    propUri = entityType.GetProperty("Number");
                                     propUri?.SetValue(contract, Convert.ToInt32(uri.Uri.Segments.GetValue(uri.Uri.Segments.Length - 1).ToString().Replace("/", "")), null);
 
                                     propUri = entityType.GetProperty("LocalId");

@@ -4,119 +4,127 @@
 @using GridMvc.Html
 @using Jmelosegui.Mvc.GoogleMap
 @using ContractViewer.Models;
+@using GridMvc.Sorting
 
 @{
     ViewBag.Title = "Home Page";
 }
 
 <div class="row">
+
+    @* GoogleMap control. Load settings form Model.GoogleMap and bind circle (by coordinates)
+    and markers with defined popup info windows
+
+     Info window linked to SubjectDetail view and to business-entity profile (linked.opendata.cz) *@
+
     @{
         Html.GoogleMap()
-          .Name(Model.GoogleMap.MapName)
-          .Height(Model.GoogleMap.Height)
-          .Center(c => c.Address(Model.GoogleMap.Address))
-          .Zoom(Model.GoogleMap.Zoom)
-          .Culture(Model.GoogleMap.Culture)
-          .ScaleControlVisible(Model.GoogleMap.ShowScaleControl)
-          .PanControlVisible(Model.GoogleMap.ShowPanControl)
-          .PanControlPosition(Model.GoogleMap.PanControlPosition)
-          .OverviewMapControlVisible(Model.GoogleMap.ShowOverviewMapControl)
-          .OverviewMapControlOpened(Model.GoogleMap.OverviewMapControlOpened)
-          .StreetViewControlVisible(Model.GoogleMap.ShowStreetViewControl)
-          .StreetViewControlPosition(Model.GoogleMap.StreetViewControlPosition)
-          .ZoomControlVisible(Model.GoogleMap.ShowZoomControl)
-          .ZoomControlPosition(Model.GoogleMap.ZoomControlPosition)
-          .ZoomControlStyle(Model.GoogleMap.ZoomControlStyle)
-          .MapTypeControlVisible(Model.GoogleMap.ShowMapType)
-          .MapTypeId(Model.GoogleMap.MapTypeControl)
-          .MapTypeControlStyle(Model.GoogleMap.MapTypeControlStyle)
-          .MapTypeControlPosition(Model.GoogleMap.MapTypeControlPosition)
-          .StyledMapTypes(map =>
-              map.Add()
-                  .Styles(style =>
-                  {
-                      style.Add()
-                          .FeatureType(FeatureType.Administrative)
-                          .ElementType(ElementType.LabelsTextFill)
-                          .Color(ColorTranslator.FromHtml("#444444"));
+            .Name(Model.GoogleMap.MapName)
+            .Height(Model.GoogleMap.Height)
+            .Center(c => c.Address(Model.GoogleMap.Address))
+            .Zoom(Model.GoogleMap.Zoom)
+            .Culture(Model.GoogleMap.Culture)
+            .ScaleControlVisible(Model.GoogleMap.ShowScaleControl)
+            .PanControlVisible(Model.GoogleMap.ShowPanControl)
+            .PanControlPosition(Model.GoogleMap.PanControlPosition)
+            .OverviewMapControlVisible(Model.GoogleMap.ShowOverviewMapControl)
+            .OverviewMapControlOpened(Model.GoogleMap.OverviewMapControlOpened)
+            .StreetViewControlVisible(Model.GoogleMap.ShowStreetViewControl)
+            .StreetViewControlPosition(Model.GoogleMap.StreetViewControlPosition)
+            .ZoomControlVisible(Model.GoogleMap.ShowZoomControl)
+            .ZoomControlPosition(Model.GoogleMap.ZoomControlPosition)
+            .ZoomControlStyle(Model.GoogleMap.ZoomControlStyle)
+            .MapTypeControlVisible(Model.GoogleMap.ShowMapType)
+            .MapTypeId(Model.GoogleMap.MapTypeControl)
+            .MapTypeControlStyle(Model.GoogleMap.MapTypeControlStyle)
+            .MapTypeControlPosition(Model.GoogleMap.MapTypeControlPosition)
+            .StyledMapTypes(map =>
+                map.Add()
+                    .Styles(style =>
+                    {
+                        style.Add()
+                            .FeatureType(FeatureType.Administrative)
+                            .ElementType(ElementType.LabelsTextFill)
+                            .Color(ColorTranslator.FromHtml("#444444"));
 
-                      style.Add()
-                          .FeatureType(FeatureType.Landscape)
-                          .ElementType(ElementType.All)
-                          .Color(ColorTranslator.FromHtml("#f2f2f2"));
+                        style.Add()
+                            .FeatureType(FeatureType.Landscape)
+                            .ElementType(ElementType.All)
+                            .Color(ColorTranslator.FromHtml("#f2f2f2"));
 
-                      style.Add()
-                          .FeatureType(FeatureType.Poi)
-                          .ElementType(ElementType.All)
-                          .Visibility(MapTypeStylerVisibility.Off);
+                        style.Add()
+                            .FeatureType(FeatureType.Poi)
+                            .ElementType(ElementType.All)
+                            .Visibility(MapTypeStylerVisibility.Off);
 
-                      style.Add()
-                          .FeatureType(FeatureType.Road)
-                          .ElementType(ElementType.All)
-                          .Saturation(-100)
-                          .Lightness(45);
+                        style.Add()
+                            .FeatureType(FeatureType.Road)
+                            .ElementType(ElementType.All)
+                            .Saturation(-100)
+                            .Lightness(45);
 
-                      style.Add()
-                          .FeatureType(FeatureType.RoadHighway)
-                          .ElementType(ElementType.All)
-                          .Visibility(MapTypeStylerVisibility.Simplified);
+                        style.Add()
+                            .FeatureType(FeatureType.RoadHighway)
+                            .ElementType(ElementType.All)
+                            .Visibility(MapTypeStylerVisibility.Simplified);
 
-                      style.Add()
-                          .FeatureType(FeatureType.RoadArterial)
-                          .ElementType(ElementType.LabelsIcon)
-                          .Visibility(MapTypeStylerVisibility.Off);
+                        style.Add()
+                            .FeatureType(FeatureType.RoadArterial)
+                            .ElementType(ElementType.LabelsIcon)
+                            .Visibility(MapTypeStylerVisibility.Off);
 
-                      style.Add()
-                          .FeatureType(FeatureType.Transit)
-                          .ElementType(ElementType.All)
-                          .Visibility(MapTypeStylerVisibility.Off);
+                        style.Add()
+                            .FeatureType(FeatureType.Transit)
+                            .ElementType(ElementType.All)
+                            .Visibility(MapTypeStylerVisibility.Off);
 
-                      style.Add()
-                          .FeatureType(FeatureType.Water)
-                          .ElementType(ElementType.All)
-                          .Color(ColorTranslator.FromHtml("#46bcec"))
-                          .Visibility(MapTypeStylerVisibility.On);
-                  })
-                  .MapTypeName("LightBlue Style")
-          )
-          .MapTypeId("LightBlue Style")
-          .BindTo<Publisher, Circle>
-          (Model.Subjects, mappings =>
-          {
-              mappings.For<Publisher>(binding => binding.ItemDataBound(
-                  (circle, obj) =>
-                  {
-                      circle.Center = new Location((double)obj.GeoPoint.Latitude, (double)obj.GeoPoint.Longitude);
-                      circle.Radius = (int)(Math.Pow((double)obj.NumberOfContracts,0.1) * 10000);
-                      circle.Clickable = true;
-                  }));
-          })
-          .BindTo<Publisher, Marker>
-          (Model.Subjects, mappings =>
-          {
-              mappings.For<Publisher>(binding => binding.ItemDataBound(
-                  (marker, obj) =>
-                  {
-                      marker.Latitude = (double)obj.GeoPoint.Latitude;
-                      marker.Longitude = (double)obj.GeoPoint.Longitude;
-                      marker.Window = new InfoWindow(marker)
-                      {
-                          Template =
+                        style.Add()
+                            .FeatureType(FeatureType.Water)
+                            .ElementType(ElementType.All)
+                            .Color(ColorTranslator.FromHtml("#46bcec"))
+                            .Visibility(MapTypeStylerVisibility.On);
+                    })
+                    .MapTypeName("LightBlue Style")
+            )
+            .MapTypeId("LightBlue Style")
+            .BindTo<Publisher, Circle>
+            (Model.Subjects, mappings =>
+            {
+                mappings.For<Publisher>(binding => binding.ItemDataBound(
+                    (circle, obj) =>
+                    {
+                        circle.Center = new Location((double)obj.GeoPoint.Latitude, (double)obj.GeoPoint.Longitude);
+                        circle.Radius = obj.NumberOfContracts * 2000;
+                        circle.Clickable = true;
+                    }));
+            }) 
+            .BindTo<Publisher, Marker>
+            (Model.Subjects, mappings =>
+            {
+            mappings.For<Publisher>(binding => binding.ItemDataBound(
+                    (marker, obj) =>
+                    {
+                        marker.Latitude = (double)obj.GeoPoint.Latitude;
+                        marker.Longitude = (double)obj.GeoPoint.Longitude;
+                        marker.Window = new InfoWindow(marker)
+                        {
+                            Template =
                             {
+
                                 Content = () => ViewContext.Writer.Write(
                                     "<text>" +
-                                        "<div>" +
-                                            "<h2>Město " + @Html.ActionLink(obj.Name, "SubjectDetail", new { Publisher = obj.Name, PublisherId = obj.Id }) + "</h2>" +
-                                            ((!String.IsNullOrEmpty(obj.ImageUrl)) ? "<img class=\"img-thumbnail\" alt=\"\" src=\"" + @Url.Content(obj.ImageUrl) + "\"/>" : String.Empty) +
-                                            "<hr/>" +
-                                            "<p class=\"lead\"><strong>IČ: </strong><a href=\"" + obj.AresUrl  + "\">" + obj.Id + "</a><br/>" +
-                                            "<strong>Počet otevřených smluv: </strong>" + obj.NumberOfContracts + "</p>" +
-                                        "</div>" +
+                                    "<div>" +
+                                    "<h2>Město " + @Html.ActionLink(obj.Name, "SubjectDetail", new {Publisher = obj.Name, PublisherId = obj.Id}) + "</h2>" +
+                                    ((!String.IsNullOrEmpty(obj.ImageUrl)) ? "<img class=\"img-thumbnail\" alt=\"\" src=\"" + @Url.Content(obj.ImageUrl) + "\"/>" : String.Empty) +
+                                    "<hr/>" +
+                                    "<p class=\"lead\"><strong>IČ: </strong><a href=\"" + obj.AresUrl + "\">" + obj.Id + "</a><br/>" +
+                                    "<strong>Počet otevřených smluv: </strong>" + obj.NumberOfContracts + "</p>" +
+                                    "</div>" +
                                     "</text>")
                             }
-                      };
-                  }));
-          }).Render();
+                        };
+                    }));
+            }).Render();
     }
 
 </div>
@@ -128,6 +136,8 @@
         <h2>Seznam smluv</h2>
 
         <hr/>
+
+        @* Grid - list of contracts, first column is linked to ContractDetail view, second is linked to SubjectDetail view *@
 
         @Html.Grid(Model.Contracts).Columns(columns =>
         {
@@ -147,7 +157,16 @@
                         @Html.ActionLink(d.Publisher, "SubjectDetail", new {d.Publisher, d.PublisherId})
                     </b>);
 
-        }).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+            columns.Add(model => model.ContractId).Titled("Lok. Id");
+            columns.Add(model => model.Version).Titled("Verze");
+            columns.Add(model => model.ContractType).Titled("Typ smlouvy");
+            columns.Add(model => model.Title).Titled("Předmět");
+            columns.Add(model => model.DateSigned).Titled("Datum vystavení").Format("{0:dd.MM.yyyy}").SetWidth(100).SortInitialDirection(GridSortDirection.Descending);
+            columns.Add(model => model.ValidFrom).Titled("Datum účinnosti").Format("{0:dd.MM.yyyy}").SetWidth(100);
+            columns.Add(model => model.ValidUntil).Titled("Konec účinnosti").Format("{0:dd.MM.yyyy}").SetWidth(100);
+            columns.Add(model => model.Amount).Titled("Částka vč. DPH").Encoded(false).Sanitized(false).RenderValueAs(d => @<div class="text-right"> @d.Amount.ToString("N", CultureInfo.CreateSpecificCulture("cs-CZ")) </div>).SetWidth(120);
+
+        }).WithPaging(20).Sortable().Filterable().WithMultipleFilters().WithGridItemsCount("Počet nalezených smluv")
     </div>
     <div class="col-md-1"></div>
 </div>

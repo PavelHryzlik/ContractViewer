@@ -26,13 +26,15 @@ namespace ContractViewer
                       "~/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/gridmvc").Include(
-                     "~/Scripts/gridmvc.min.js"));
+                     "~/Scripts/gridmvc.min.js",
+                     "~/Scripts/bootstrap-datepicker.js"));
 
             // Style classes for Grid table
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css",
-                      "~/Content/Gridmvc.css"));
+                      "~/Content/Gridmvc.css",
+                      "~/Content/gridmvc.datepicker.css"));
         }
     }
 }

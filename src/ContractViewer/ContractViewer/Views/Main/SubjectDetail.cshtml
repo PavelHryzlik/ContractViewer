@@ -1,12 +1,14 @@
 ﻿@model ContractViewer.Models.PublisherViewModel
+@using System.Globalization
 @using ContractViewer.Utils
 @using GridMvc.Html
-@using WebGrease.Css.Extensions
+@using GridMvc.Sorting
 
 @{
     ViewBag.Title = "SubjectDetail";
 }
 
+@* Contract properties, PublisherId property (IČ) is linked to PublicContracts view *@
 
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
@@ -79,17 +81,30 @@
         <hr />
         <h4>Seznam smluv</h4>
         <div>
-            @Html.Grid(Model.Contracts).Columns(columns =>
-    {
-        columns.Add()
-            .Encoded(false)
-            .Sanitized(false)
-            .RenderValueAs(d =>
-            @<b>
-                @Html.ActionLink("Detail", "ContractDetail", new { d.BaseDomain, d.ContractId, d.Version, d.Publisher })
-            </b>);
 
-    }).AutoGenerateColumns().WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
+        @* Grid - list of contracts, first column is linked to ContractDetail view *@
+
+        @Html.Grid(Model.Contracts).Columns(columns =>
+        {
+            columns.Add()
+                .Encoded(false)
+                .Sanitized(false)
+                .RenderValueAs(d =>
+                    @<b>
+                        @Html.ActionLink("Detail", "ContractDetail", new {d.BaseDomain, d.ContractId, d.Version, d.Publisher})
+                    </b>);
+
+            columns.Add(model => model.ContractId).Titled("Lok. Id");
+            columns.Add(model => model.Version).Titled("Verze");
+            columns.Add(model => model.ContractType).Titled("Typ smlouvy");
+            columns.Add(model => model.Title).Titled("Předmět");
+            columns.Add(model => model.DateSigned).Titled("Datum vystavení").Format("{0:dd.MM.yyyy}").SetWidth(100).SortInitialDirection(GridSortDirection.Descending);
+            columns.Add(model => model.ValidFrom).Titled("Datum účinnosti").Format("{0:dd.MM.yyyy}").SetWidth(100);
+            columns.Add(model => model.ValidUntil).Titled("Konec účinnosti").Format("{0:dd.MM.yyyy}").SetWidth(100);
+            columns.Add(model => model.Amount).Titled("Částka vč. DPH").Encoded(false).Sanitized(false).RenderValueAs(d => @<div class="text-right"> @d.Amount.ToString("N", CultureInfo.CreateSpecificCulture("cs-CZ")) </div>).SetWidth(120);
+
+
+        }).WithPaging(10).Sortable().Filterable().WithGridItemsCount("Počet nalezených smluv")
         </div>
     </div>
 </div>

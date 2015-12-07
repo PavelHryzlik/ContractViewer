@@ -30,6 +30,6 @@ namespace ContractViewer.Models
 
         [Display(Name = "Číslo přílohy")]
         [GridColumn(Title = "Číslo přílohy")]
-        public string Number { get; set; }
+        public int Number { get; set; }
     }
 }

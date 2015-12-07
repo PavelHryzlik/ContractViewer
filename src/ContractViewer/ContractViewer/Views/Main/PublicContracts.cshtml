@@ -1,4 +1,5 @@
 ﻿@model ContractViewer.Models.PublicContractViewModel
+@using System.Globalization
 @using GridMvc.Html
 
 @{
@@ -9,15 +10,26 @@
     <div class="col-md-10  col-md-offset-1">
         <h2>Veřejné zakázky subjektu - @Model.Name IČ @Model.Id</h2>
 
-        <hr />
+        <hr/>
+
+        @* Grid - list of publicContract, first (ISVZUS Id) column is linked to buyer-profile (linked.opendata.cz),
+            third (supplier IČ) is linked to business-entity profile (linked.opendata.cz) *@
 
         <div class="row">
-            @Html.Grid(Model.PublicContract).Columns(columns => columns.Add(model => model.EvNumber)
-        .Titled("Evidenční číslo ISVZUS")
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode("http://linked.opendata.cz/resource/domain/buyer-profiles/contract/cz/" + d.EvNumber)>@d.EvNumber</a> )).AutoGenerateColumns().WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
-        </div>
+        @Html.Grid(Model.PublicContract).Columns(columns =>
+        {
+            columns.Add(model => model.EvNumber).Titled("Evidenční číslo ISVZUS").Encoded(false).Sanitized(false)
+                .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode("http://linked.opendata.cz/resource/domain/buyer-profiles/contract/cz/" + d.EvNumber)>@d.EvNumber</a>);
+
+            columns.Add(model => model.PublicContractId).Titled("Identifikátor zakázky");
+            columns.Add(model => model.Id).Titled("Dodavatel IČ").Encoded(false).Sanitized(false)
+                .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode("http://linked.opendata.cz/resource/business-entity/CZ" + d.Id)>@d.Id</a>);
+
+            columns.Add(model => model.Title).Titled("Předmět");
+            columns.Add(model => model.Amount).Titled("Částka vč.DPH").Encoded(false).Sanitized(false).RenderValueAs(d => @<div class="text-right"> @d.Amount.ToString("N", CultureInfo.CreateSpecificCulture("cs-CZ")) </div>);
+
+        }).WithPaging(20).Sortable().Filterable().WithGridItemsCount("Počet nalezených veřejných zakázek")
     </div>
+</div>
 </div>
 

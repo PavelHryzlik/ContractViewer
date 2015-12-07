@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using GridMvc.DataAnnotations;
 
 namespace ContractViewer.Models
@@ -61,18 +62,18 @@ namespace ContractViewer.Models
         public string Description { get; set; }
 
         [Display(Name = "Datum vystavení")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
-        [GridColumn(Title = "Datum vystavení", Format = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        [GridColumn(Title = "Datum vystavení", Format = "{0:dd.MM.yyyy}")]
         public DateTime DateSigned { get; set; }
 
         [Display(Name = "Datum účinnosti smlouvy")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
-        [GridColumn(Title = "Datum účinnosti", Format = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        [GridColumn(Title = "Datum účinnosti", Format = "{0:dd.MM.yyyy}")]
         public DateTime? ValidFrom { get; set; }
 
         [Display(Name = "Datum ukončení účinnosti smlouvy")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
-        [GridColumn(Title = "Konec účinnosti", Format = "{0:dd/MM/yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}")]
+        [GridColumn(Title = "Konec účinnosti", Format = "{0:dd.MM.yyyy}")]
         public DateTime? ValidUntil { get; set; }
 
         [Display(Name = "Kompetence")]
@@ -84,10 +85,12 @@ namespace ContractViewer.Models
         public string Anonymised { get; set; }
 
         [Display(Name = "Částka bez DPH")]
+        [DisplayFormat(DataFormatString = "{0:N}")]
         [NotMappedColumn]
         public float AmountNoVat { get; set; }
 
         [Display(Name = "Částka vč. DPH")]
+        [DisplayFormat(DataFormatString = "{0:N}")]
         [GridColumn(Title = "Částka vč. DPH")]
         public float Amount { get; set; }
 

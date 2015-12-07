@@ -15,7 +15,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Číslo verze")]
         [GridColumn(Title = "Číslo verze")]
-        public string VersionOrder { get; set; }
+        public decimal VersionOrder { get; set; }
 
         [Display(Name = "Datum publikace")]
         [GridColumn(Title = "Datum publikace", Format = "{0:dd/MM/yyyy hh:mm:ss}")]

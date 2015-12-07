@@ -309,7 +309,7 @@
                 PREFIX pccz: <http://purl.org/procurement/public-contracts-czech#>
                 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-                SELECT DISTINCT ?Uri ?ContractId ?EvNumber ?Title ?SupplierUri ?Id ?Amount ?Vat
+                SELECT DISTINCT ?Uri ?PublicContractId ?EvNumber ?Title ?SupplierUri ?Id ?Amount ?Vat
                 WHERE 
                 {
                   ?Uri pc:contractingAuthority @businessEntity ;
@@ -317,7 +317,7 @@
      
                   OPTIONAL 
                   {
-                    ?Uri pccz:kodprofil ?ContractId ;
+                    ?Uri pccz:kodprofil ?PublicContractId ;
                          pccz:kodusvzis ?EvNumber  ;
                          pco:awardedTender ?Tender .
                     ?Tender pco:offeredPrice ?PriceSpec ;

@@ -39,7 +39,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "PSČ")]
         [GridColumn(Title = "PSČ")]
-        public string PostalCode { get; set; }
+        public decimal PostalCode { get; set; }
 
         [Display(Name = "Plátce DPH")]
         [GridColumn(Title = "Plátce DPH")]
@@ -51,7 +51,7 @@ namespace ContractViewer.Models
         { 
             get
             {
-                if (!String.IsNullOrEmpty(StreetAddres) && !String.IsNullOrEmpty(PostalCode) && !String.IsNullOrEmpty(Locality))
+                if (!String.IsNullOrEmpty(StreetAddres) && (PostalCode != 0) && !String.IsNullOrEmpty(Locality))
                     return StreetAddres + " " + PostalCode + " " + Locality;
                 return Address;
             }

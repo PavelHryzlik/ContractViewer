@@ -1,5 +1,7 @@
 ﻿@model ContractViewer.Models.ContractViewModel
+@using System.Globalization
 @using GridMvc.Html
+@using GridMvc.Sorting
 
 @{
     ViewBag.Title = "ContractDetail";
@@ -9,17 +11,20 @@
 
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        
-        
+
+
         <h2>Detail smlouvy</h2>
 
         <h4>Smlouva <a href="@Model.Contract.Uri"> @Model.Contract.Uri </a></h4>
-        <hr />
+        <hr/>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-5 col-md-offset-1">       
+
+    @* Contract properties, Document property is linked to physical document representing an contract *@
+
+    <div class="col-md-5 col-md-offset-1">
         <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.Contract.Document)
@@ -142,7 +147,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Contract.AmountNoVat)
+                @Html.DisplayFor(model => model.Contract.AmountNoVat, CultureInfo.CreateSpecificCulture("cs-CZ"))
             </dd>
 
             <dt>
@@ -150,7 +155,7 @@
             </dt>
 
             <dd>
-                @Html.DisplayFor(model => model.Contract.Amount)
+                @Html.DisplayFor(model => model.Contract.Amount, CultureInfo.CreateSpecificCulture("cs-CZ"))
             </dd>
         </dl>
     </div>
@@ -160,51 +165,98 @@
     <div class="col-md-10  col-md-offset-1">
         <div class="row" style="@(Model.Parties.Any() ? "display:block" : "display:none")">
             <hr />
-            <h4>Smluvní strany</h4>
-            @Html.Grid(Model.Parties).Columns(columns => columns.Add(model => model.Id)
-        .Titled("IČ")
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(d => !String.IsNullOrEmpty(d.Id) ? Html.ActionLink(d.Id, "PublicContracts", new { name = d.Name, id = d.Id }) : MvcHtmlString.Create(string.Empty))).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+            <h4>Smluvní strany</h4>,
+
+            @* Grid - list of parties, first column (IČ) is linked to business-entity profile (linked.opendata.cz) *@
+
+            @Html.Grid(Model.Parties).Columns(columns =>
+            {
+                columns.Add(model => model.Id)
+                    .Titled("IČ")
+                    .Encoded(false)
+                    .Sanitized(false)
+                    .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode("http://linked.opendata.cz/resource/business-entity/CZ" + d.Id)>@d.Id</a>);
+
+                columns.Add(model => model.LocalId).Titled("Lokální Id");
+                columns.Add(model => model.Name).Titled("Název");
+                columns.Add(model => model.Address).Titled("Adresa");
+                columns.Add(model => model.Country).Titled("Stát");
+                columns.Add(model => model.PaysVat).Titled("Plátce DPH");
+
+            }).WithPaging(10).Sortable().Filterable()
         </div>
 
         <div class="row" style="@(Model.Attachments.Any() ? "display:block" : "display:none")">
             <hr />
             <h4>Přílohy</h4>
-            @Html.Grid(Model.Attachments).Columns(columns => columns.Add(model => model.Document)
-        .Titled("Dokument")
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a> )).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+
+            @* Grid - list of attachments, first column is linked to physical document representing an attachment *@
+
+            @Html.Grid(Model.Attachments).Columns(columns =>
+            {
+                columns.Add(model => model.Document)
+                    .Titled("Dokument")
+                    .Encoded(false)
+                    .Sanitized(false)
+                    .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a>);
+
+                columns.Add(model => model.AttachmentId).Titled("Lokální Id");
+                columns.Add(model => model.Number).Titled("Číslo přílohy");
+                columns.Add(model => model.Title).Titled("Předmět");
+
+            }).WithPaging(10).Sortable().Filterable()
         </div>
 
         <div class="row" style="@(Model.Amendments.Any() ? "display:block" : "display:none")">
             <hr />
             <h4>Dodatky</h4>
-            @Html.Grid(Model.Amendments).Columns(columns => columns.Add(model => model.Document)
-        .Titled("Dokument")
-        .Encoded(false)
-        .Sanitized(false)
-        .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a> )).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+
+            @* Grid - list of amendments, first column is linked to physical document representing an amendment *@
+
+            @Html.Grid(Model.Amendments).Columns(columns =>
+            {
+                columns.Add(model => model.Document)
+                    .Titled("Dokument")
+                    .Encoded(false)
+                    .Sanitized(false)
+                    .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Document)>@d.Document</a>);
+
+                columns.Add(model => model.AmendmentId).Titled("Lokální Id");
+                columns.Add(model => model.Number).Titled("Číslo dodatku");
+                columns.Add(model => model.Title).Titled("Předmět");
+                columns.Add(model => model.DateSigned).Titled("Datum podpisu").Format("{0:dd.MM.yyyy}").SortInitialDirection(GridSortDirection.Descending);
+
+            }).WithPaging(10).Sortable().Filterable()
         </div>
 
         <div class="row" style="@(Model.Milestones.Any() ? "display:block" : "display:none")">
             <hr/>
             <h4>Milníky</h4>
-            @Html.Grid(Model.Milestones).AutoGenerateColumns().WithPaging(10).Sortable().Filterable()
+
+            @* Grid - list of milestones *@
+
+            @Html.Grid(Model.Milestones).Columns(columns =>
+            {
+                columns.Add(model => model.Title).Titled("Název milníku");
+                columns.Add(model => model.DueDate).Titled("Datum").Format("{0:dd.MM.yyyy hh:mm:ss}").SortInitialDirection(GridSortDirection.Descending);
+
+            }).WithPaging(10).Sortable().Filterable()
         </div>
 
         <div class="row" style="@(Model.Versions.Any() ? "display:block" : "display:none")">
             <hr />
             <h4>Verze smlouvy</h4>
+
+            @* Grid - list of versions, third column is linked to version detail *@
+
             @Html.Grid(Model.Versions).Columns(columns =>
             {
                 columns.Add(model => model.VersionOrder).Titled("Číslo verze");
-                columns.Add(model => model.Issued).Titled("Datum publikace").Format("{0:dd/MM/yyyy hh:mm:ss}");
+                columns.Add(model => model.Issued).Titled("Datum publikace").Format("{0:dd.MM.yyyy hh:mm:ss}");
                 columns.Add(model => model.Uri).Titled("Identifikátor verze")
-            .Encoded(false)
-            .Sanitized(false)
-            .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Uri)>@d.Uri</a> );
+                .Encoded(false)
+                .Sanitized(false)
+                .RenderValueAs(d => @<a href=@HttpUtility.UrlPathEncode(d.Uri)>@d.Uri</a> );
 
             }).WithPaging(10).Sortable().Filterable()
         </div>

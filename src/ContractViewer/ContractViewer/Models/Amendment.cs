@@ -27,7 +27,7 @@ namespace ContractViewer.Models
 
         [Display(Name = "Číslo dodatku")]
         [GridColumn(Title = "Číslo dodatku")]
-        public string Number { get; set; }
+        public int Number { get; set; }
 
         [Display(Name = "Předmět")]
         [GridColumn(Title = "Předmět")]
